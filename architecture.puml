@@ -1,0 +1,66 @@
+@startuml 运维系统架构图
+
+' 从左到右排列
+left to right direction
+
+' 让连线为直角折线，减少重叠
+skinparam linetype ortho
+
+' 增大字体，提升可读性
+skinparam defaultFontSize 18
+
+' 前端层
+package "前端层" as frontend {
+    [Vue3] as vue
+    [ElementPlus] as element
+    [Vuex] as vuex
+    [Router] as router
+    [Axios] as axios
+}
+
+' 后端层
+package "后端层" as backend {
+    [SpringBoot] as springboot
+    [Security] as security
+    [MyBatis] as mybatis
+    [Swagger] as swagger
+}
+
+' 云服务层
+package "云服务层" as cloud {
+    [Redis] as redis
+    [RabbitMQ] as rabbitmq
+    [Nginx] as nginx
+}
+
+' 数据存储层
+package "数据存储层" as storage {
+    [MySQL] as mysql
+    [文件存储] as filestorage
+}
+
+' 层级之间的关系
+frontend --> backend : HTTP/HTTPS
+
+backend --> cloud : 消息队列/缓存
+
+backend --> storage : 数据持久化
+
+cloud --> storage : 数据同步
+
+' 组件内部关系（可选，按需增删）
+vue --> element : 使用
+vue --> vuex : 状态管理
+vue --> router : 路由控制
+vue --> axios : HTTP请求
+
+springboot --> security : 安全控制
+springboot --> mybatis : 数据访问
+springboot --> swagger : API文档
+springboot --> redis : 缓存
+springboot --> rabbitmq : 消息队列
+
+nginx --> frontend : 静态资源
+nginx --> backend : 反向代理
+
+@enduml 
