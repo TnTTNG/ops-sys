@@ -2,9 +2,11 @@ package ops.example.backend.controller;
 
 import jakarta.annotation.Resource;
 import ops.example.backend.common.Result;
-import ops.example.backend.entity.Users;
+import ops.example.backend.entity.Account;
+import ops.example.backend.entity.User;
 import ops.example.backend.exception.CustomerException;
 import ops.example.backend.service.AdminService;
+import ops.example.backend.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +23,8 @@ public class WebController {
 
     @Resource
     AdminService adminService;
+    @Resource
+    UserService userService;
 
     // 表示一个GET请求接口
     @GetMapping("/hello")
@@ -39,8 +43,21 @@ public class WebController {
     }
 
     @PostMapping("/login")
-    public Result login(@RequestBody Users users) throws CustomerException {
-        Users dbUser = adminService.login(users);
-        return Result.success(dbUser);
+    public Result login(@RequestBody Account account) throws CustomerException {
+        Account dbAccount = null;
+        if ("ADMIN".equals(account.getRole())) {
+            dbAccount = adminService.login(account);
+        } else if ("USER".equals(account.getRole())){
+            dbAccount = userService.login(account);
+        } else {
+            throw new CustomerException("非法请求");
+        }
+        return Result.success(dbAccount);
     }
+    @PostMapping("/register")
+    public Result register(@RequestBody User user) throws CustomerException {
+        userService.register(user);
+        return Result.success();
+    }
+
 }

@@ -6,8 +6,9 @@ import java.time.LocalDateTime;
  * @author ZhanHui TONG
  * @version 1.0
  * @created_date 2025-04-20-22:34
+ * @role 超级管理员信息
  */
-public class Users {
+public class Admin extends Account{
     private Integer id;
     private String username;
     private String password;
@@ -19,6 +20,7 @@ public class Users {
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private Integer deleted;
+    private String role;
 
     public Integer getId() {
         return id;
@@ -106,5 +108,13 @@ public class Users {
 
     public void setDeleted(Integer deleted) {
         this.deleted = deleted;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

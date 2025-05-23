@@ -112,7 +112,7 @@ frontend/
 ### 用户管理接口
 
 #### 1. 用户注册
-- 请求路径：`POST /api/v1/users/register`
+- 请求路径：`POST /api/v1/admin/register`
 - 请求参数：
 ```json
 {
@@ -135,7 +135,7 @@ frontend/
 ```
 
 #### 2. 用户登录
-- 请求路径：`POST /api/v1/users/login`
+- 请求路径：`POST /api/v1/admin/login`
 - 请求参数：
 ```json
 {

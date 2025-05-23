@@ -1,6 +1,6 @@
 package ops.example.backend.mapper;
 
-import ops.example.backend.entity.Users;
+import ops.example.backend.entity.Admin;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -14,13 +14,13 @@ import java.util.List;
  */
 @Mapper
 public interface AdminMapper {
-    List<Users> selectAll(Users users);
+    List<Admin> selectAll(Admin admin);
     @Select("select * from sys_user where username = #{username}")
-    Users selectByUsername(String username);
-    void insert(Users users);
+    Admin selectByUsername(String username);
+    void insert(Admin admin);
 
 
-    void updateById(Users users);
+    void updateById(Admin admin);
 
     @Delete("delete from `sys_user` where id = #{id}")
     void deleteById(Integer id);

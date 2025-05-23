@@ -56,10 +56,10 @@
       <el-form ref="formRef" :model="data.form" :rules="data.rules" label-width="80px" style="padding: 20px 30px 10px 0">
         <div v-if="data.errorMessage" class="error-message">{{ data.errorMessage }}</div>
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="data.form.username" autocomplete="off" />
+          <el-input v-model="data.form.username" autocomplete="off" placeholder="请输入用户名"/>
         </el-form-item>
 <!--        <el-form-item label="权限" prop="nickname">-->
-<!--          <el-input v-model="data.form.nickname" autocomplete="off" />-->
+<!--          <el-input v-model="data.form.nickname" autocomplete="off" placeholder="请输入"/>-->
 <!--        </el-form-item>-->
         <el-form-item label="电话" prop="phone">
           <el-input v-model="data.form.phone" autocomplete="off" />
@@ -68,7 +68,7 @@
           <el-input v-model="data.form.email" autocomplete="off" />
         </el-form-item>
         <el-form-item label="权限" prop="nickname">
-          <el-select v-model="data.form.nickname" placeholder="权限" style="width: 120px">
+          <el-select v-model="data.form.nickname" placeholder="权限" style="width: 90px">
             <el-option
                 v-for="item in options1"
                 :key="item.value"
@@ -137,7 +137,7 @@ const data = reactive({
 const formRef = ref()
 
 const load = () => {
-  request.get('/admin/selectPage', {
+  request.get('/user/selectPage', {
     params: {
       pageNum: data.pageNum,
       pageSize: data.pageSize,
@@ -173,10 +173,11 @@ const options = [
     // disabled: true,
   },
 ]
+
 const options1 = [
   {
-    value: '超级管理员',
-    label: '超级管理员',
+    value: '管理员',
+    label: '管理员',
     // disabled: true,
   },
 ]
@@ -194,7 +195,7 @@ const closeDialog = () => {
 const add = () => {
   formRef.value.validate((valid) => {
     if (valid) { // 验证通过
-      request.post('/admin/add', data.form).then(res => {
+      request.post('/user/add', data.form).then(res => {
         if (res.code === '200') {
           closeDialog()
           ElMessage.success('新增成功')
@@ -222,7 +223,7 @@ const handleEdit = (row) => {
 const update = () => {
   formRef.value.validate((valid) => {
     if (valid) { // 验证通过
-      request.put('/admin/update', data.form).then(res => {
+      request.put('/user/update', data.form).then(res => {
         if (res.code === '200') {
           closeDialog()
           ElMessage.success('修改成功')
@@ -248,7 +249,7 @@ const save = () => {
 
 const del = (id) => {
   ElMessageBox.confirm('删除后无法恢复数据，请确认是否删除该用户', '删除确认', { type: 'warning'}).then(res => {
-    request.delete('/admin/delete/' + id).then(res => {
+    request.delete('/user/delete/' + id).then(res => {
       if (res.code === '200') {
 
         ElMessage.success('删除成功')
@@ -277,7 +278,7 @@ const deleteBatch = () => {
     return
   }
   ElMessageBox.confirm('删除后无法恢复数据，请确认是否删除该用户', '删除确认', { type: 'warning'}).then(res => {
-    request.delete('/admin/deleteBatch', { data: data.rows}).then(res => {
+    request.delete('/user/deleteBatch', { data: data.rows}).then(res => {
       if (res.code === '200') {
 
         ElMessage.success('删除成功')

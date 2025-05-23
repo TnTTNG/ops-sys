@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="ops.example.backend.mapper.AdminMapper">
-    <select id="selectAll" resultType="ops.example.backend.entity.Admin">
-        SELECT * FROM sys_user
+<mapper namespace="ops.example.backend.mapper.UserMapper">
+    <select id="selectAll" resultType="ops.example.backend.entity.User">
+        SELECT * FROM user
         <where>
             <if test="username != null"> username like concat('%', #{username}, '%')</if>
             <if test="status != null">and status = #{status}</if>
@@ -13,12 +13,12 @@
     </select>
 
     <insert id="insert">
-        insert into sys_user (username, password, nickname, phone, email, status)
+        insert into user (username, password, nickname, phone, email, status)
         values(#{username}, #{password}, #{nickname}, #{phone}, #{email}, #{status})
     </insert>
 
     <update id="updateById">
-        update `sys_user` set username = #{username}, nickname = #{nickname}, phone = #{phone}, email = #{email}, status = #{status}
+        update `user` set username = #{username}, nickname = #{nickname}, phone = #{phone}, email = #{email}, status = #{status}
         where id = #{id}
     </update>
 </mapper>                             

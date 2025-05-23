@@ -7,12 +7,13 @@ const router = createRouter({
     { path: '/', redirect: '/manager/home', meta: { requiresAuth: true}},
     { path: '/manager',component: () => import('@/views/Manager.vue'), meta: { requiresAuth: true},
       children: [
-        { path: 'home', meta: { name: '主页', meta: { requiresAuth: true} }, component: () => import('@/views/Home.vue')},
-        { path: 'admin', meta: { name: '用户管理 / 管理员信息', meta: { requiresAuth: true} }, component: () => import('@/views/Admin.vue')},
-        { path: 'user', meta: { name: '主页', meta: { requiresAuth: true} }, component: () => import('@/views/user/User.vue')}
+        { path: 'home', meta: { name: '首页', meta: { requiresAuth: true} }, component: () => import('@/views/Home.vue')},
+        { path: 'admin', meta: { name: '用户管理 / 超级管理员信息', meta: { requiresAuth: true} }, component: () => import('@/views/Admin.vue')},
+        { path: 'user', meta: { name: '用户管理 / 普通管理员信息', meta: { requiresAuth: true} }, component: () => import('@/views/User.vue')}
       ]
     },
     { path: '/login', component: () => import('@/views/Login.vue'), meta: { requiresAuth: false} },
+    { path: '/register', component: () => import('@/views/Register.vue'), meta: { requiresAuth: false} },
     { path: '/notFound', component: () => import('@/views/404.vue'), meta: { requiresAuth: false} },
     { path: '/:pathMatch(.*)', redirect: '/notFound' }
   ]

@@ -2,12 +2,36 @@
 
 
 
-基于云计算的网络运维自动化平台
-
-（英文题目，字体：Time New Roman，小三号字）
+基于云计算的网络运维自动化平台
 
 
-学生姓名童展辉学号202111612125所在学院电子与信息工程班级通信1211所在专业通信工程申请学位工学学士指导教师韩凌波职称工程师副指导教师职称答辩时间2025年   5 月   28 日
+（英文题目，字体：Time New Roman，小三号字）
+
+
+
+学生姓名
+童展辉
+学号
+202111612125
+所在学院
+电子与信息工程
+班级
+通信1211
+所在专业
+通信工程
+申请学位
+工学学士
+指导教师
+韩凌波
+职称
+工程师
+副指导教师
+
+职称
+
+答辩时间
+2025年   5 月   28 日
+
 
 
 目  录
@@ -60,7 +84,7 @@ INTRODUCTION	III
 ②前端技术栈，Vue3 + Vite：基于Composition API开发响应式界面，Vite优化构建速度与热更新效率。Element Plus：采用Table、Form组件快速搭建管理界面，支持自定义主题。Axios：封装拦截器统一处理HTTP请求与错误响应，支持请求重试与超时配置。
 ③数据库设计，MySQL 5.7+：用户表（sys_user）包含username、password、status等字段，通过deleted标记逻辑删除（详见项目文档）。对高频查询字段（如username）添加唯一索引，优化查询性能。Redis：存储结构包括user:token:{token}（用户会话）、monitor:metrics:{instanceId}（实时监控数据）。
 　　（4）系统核心功能实现：
-①用户管理模块，注册与登录：前端调用/api/v1/users/register与/api/v1/users/login接口，后端使用BCrypt加密密码，生成JWT令牌（代码示例见附录1）。权限控制：通过Spring Security的@PreAuthorize注解实现接口级权限校验（如仅管理员可操作敏感资源）。
+①用户管理模块，注册与登录：前端调用/api/v1/admin/register与/api/v1/admin/login接口，后端使用BCrypt加密密码，生成JWT令牌（代码示例见附录1）。权限控制：通过Spring Security的@PreAuthorize注解实现接口级权限校验（如仅管理员可操作敏感资源）。
 ②资源管理模块，ECS实例管理：调用阿里云ECS API实现实例的创建、启停与释放，操作日志持久化至MySQL。RDS数据库管理：通过阿里云RDS API完成数据库备份与恢复，支持定时任务自动化执行。
 ③监控告警模块，数据采集，定时调用阿里云CloudMonitor API获取CPU、内存等指标，存储至MySQL并缓存至Redis。可视化展示，前端集成ECharts渲染实时监控图表，支持时间范围筛选与数据导出。告警触发，配置阈值规则，触发后通过RabbitMQ发送消息至告警服务，调用钉钉机器人API推送通知。
 ④任务调度模块，定时任务：使用Spring Scheduled注解定义任务执行周期（如每日凌晨执行数据库备份）。异步处理：通过RabbitMQ解耦任务执行与结果通知，确保高并发场景下系统稳定性。

@@ -5,10 +5,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import ops.example.backend.entity.Account;
-import ops.example.backend.entity.Admin;
+import ops.example.backend.entity.User;
 import ops.example.backend.exception.CustomerException;
 import ops.example.backend.exception.UsersException;
-import ops.example.backend.mapper.AdminMapper;
+import ops.example.backend.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,50 +17,50 @@ import java.util.List;
  * @author ZhanHui TONG
  * @version 1.0
  * @created_date 2025-04-20-18:17
- * @role 超级管理员
+ * @role 普通管理员
  */
 @Service
-public class AdminService {
+public class UserService {
 
     @Resource
-    AdminMapper adminMapper;
+    UserMapper userMapper;
 
-    public void add(Admin admin) throws CustomerException {
-        Admin dbuser = adminMapper.selectByUsername(admin.getUsername());
+    public void add(User user) throws CustomerException {
+        User dbuser = userMapper.selectByUsername(user.getUsername());
         if (dbuser != null) {
             throw new CustomerException("用户名已存在");
         }
         // 默认密码
-        if (StrUtil.isBlank(admin.getPassword())) {
-            admin.setPassword("admin");
+        if (StrUtil.isBlank(user.getPassword())) {
+            user.setPassword("123456");
         }
-        admin.setRole("ADMIN");
-        adminMapper.insert(admin);
+        user.setStatus("启用");
+        userMapper.insert(user);
     }
-    public String admin(String name) {
-        if ("admin".equals(name)) {
-            return "admin";
+    public String user(String name) {
+        if ("user".equals(name)) {
+            return "user";
         } else {
             throw new UsersException("账号错误");
         }
     }
 
-    public void update(Admin admin) {
-        adminMapper.updateById(admin);
+    public void update(User user) {
+        userMapper.updateById(user);
     }
 
     public void deleteById(Integer id) {
-        adminMapper.deleteById(id);
+        userMapper.deleteById(id);
     }
 
-    public void deleteBatch(List<Admin> list) {
-        for (Admin admin : list) {
-            this.deleteById(admin.getId());
+    public void deleteBatch(List<User> list) {
+        for (User user : list) {
+            this.deleteById(user.getId());
         }
     }
 
-    public List<Admin> selectAll() {
-        return adminMapper.selectAll(null);
+    public List<User> selectAll() {
+        return userMapper.selectAll(null);
     }
 
     /**
@@ -68,17 +68,17 @@ public class AdminService {
      * @param pageNum
      * @param pageSize
      */
-    public PageInfo<Admin> selectPage(Integer pageNum, Integer pageSize, Admin admin) {
+    public PageInfo<User> selectPage(Integer pageNum, Integer pageSize, User user) {
         // 开启分页查询
         PageHelper.startPage(pageNum, pageSize);
-        List<Admin> adminList = adminMapper.selectAll(admin);
-        return PageInfo.of(adminList);
+        List<User> userList = userMapper.selectAll(user);
+        return PageInfo.of(userList);
     }
 
 
-    public Admin login(Account account) throws CustomerException {
+    public User login(Account account) throws CustomerException {
         // 验证账号是否存在
-        Admin dbUser = adminMapper.selectByUsername(account.getUsername());
+        User dbUser = userMapper.selectByUsername(account.getUsername());
         if (dbUser == null) {
             throw new CustomerException("账号不存在");
         }
@@ -88,5 +88,9 @@ public class AdminService {
         }
 
         return dbUser;
+    }
+
+    public void register(User user) throws CustomerException {
+        this.add(user);
     }
 }
