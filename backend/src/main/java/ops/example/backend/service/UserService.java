@@ -9,6 +9,7 @@ import ops.example.backend.entity.User;
 import ops.example.backend.exception.CustomerException;
 import ops.example.backend.exception.UsersException;
 import ops.example.backend.mapper.UserMapper;
+import ops.example.backend.utils.TokenUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,6 +60,10 @@ public class UserService {
         }
     }
 
+    public User selectById(String id) {
+        return userMapper.selectById(id);
+    }
+
     public List<User> selectAll() {
         return userMapper.selectAll(null);
     }
@@ -86,7 +91,9 @@ public class UserService {
         if (!dbUser.getPassword().equals(account.getPassword())) {
             throw new CustomerException("账号或密码错误");
         }
-
+        // 创建token并返回给前端
+        String token = TokenUtils.createToken(dbUser.getId() + "-" + "USER", dbUser.getPassword());
+        dbUser.setToken(token);
         return dbUser;
     }
 

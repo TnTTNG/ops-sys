@@ -49,7 +49,7 @@ public class UserController {
 
     @GetMapping("/selectAll") // 完整的请求路径 http://ip:port/user/selectAll
     public Result selectAll() {
-        List<User> userList = userService.selectAll();
+        List<User> userList = userService. selectAll();
         return Result.success(userList);
     }
 

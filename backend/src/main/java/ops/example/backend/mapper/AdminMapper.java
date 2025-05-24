@@ -24,4 +24,7 @@ public interface AdminMapper {
 
     @Delete("delete from `sys_user` where id = #{id}")
     void deleteById(Integer id);
+
+    @Select("select * from sys_user where id = #{id}")
+    Admin selectById(String id);
 }

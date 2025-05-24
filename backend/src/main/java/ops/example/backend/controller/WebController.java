@@ -56,6 +56,7 @@ public class WebController {
     }
     @PostMapping("/register")
     public Result register(@RequestBody User user) throws CustomerException {
+        user.setNickname("管理员");
         userService.register(user);
         return Result.success();
     }

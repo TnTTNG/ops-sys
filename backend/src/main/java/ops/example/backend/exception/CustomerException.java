@@ -6,6 +6,7 @@ package ops.example.backend.exception;
  * @created_date 2025-04-26-23:58
  */
 public class CustomerException extends Throwable {
+
     private final String msg;
     public CustomerException(String string) {
         this.msg = string;

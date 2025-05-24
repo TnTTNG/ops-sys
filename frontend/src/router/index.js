@@ -19,24 +19,24 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  const userInfo = localStorage.getItem('code_user')
-
-  if (to.meta.requiresAuth) {
-    if (!userInfo) {
-      ElMessage.warning('请先登录')
-      next({ path: '/login'})
-    } else {
-      // 已登录，允许访问
-      next()
-    }
-  } else {
-    if (to.path === '/login' && userInfo) {
-      next({ path: '/'})
-    } else {
-      next()
-    }
-
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   const userInfo = localStorage.getItem('code_user')
+//
+//   if (to.meta.requiresAuth) {
+//     if (!userInfo) {
+//       ElMessage.warning('请先登录')
+//       next({ path: '/login'})
+//     } else {
+//       // 已登录，允许访问
+//       next()
+//     }
+//   } else {
+//     if (to.path === '/login' && userInfo) {
+//       next({ path: '/'})
+//     } else {
+//       next()
+//     }
+//
+//   }
+// })
 export default router

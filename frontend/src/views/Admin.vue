@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card" style="margin-bottom: 5px">
+    <div class="card" style="margin-bottom: 5px; margin-left: 3px">
       <el-input clearable @clear="load" style="width: 260px; margin-right: 5px" v-model="data.username" placeholder="请输入用户名查询" :prefix-icon="Search"></el-input>
 <!--      <el-input clearable @clear="load" style="width: 260px; margin-right: 5px" v-model="data.status" placeholder="请输入状态查询" :prefix-icon="Search"></el-input>-->
       <el-select v-model="data.status" clearable @clear="load" placeholder="状态" style="width: 90px">
@@ -15,15 +15,13 @@
       <el-button style="margin-left: 5px" @click="load">查 询</el-button>
       <el-button style="margin-left: 5px" @click="reset">重 置</el-button>
     </div>
-    <div class="card" style="margin-bottom: 5px">
+    <div class="card" style="margin-bottom: 5px; margin-left: 3px">
       <el-button type="primary" @click="handleAdd">新 增</el-button>
       <el-button type="danger" @click="deleteBatch">批量删除</el-button>
-      <el-button type="success">批量导入</el-button>
-      <el-button type="info">批量导出</el-button>
     </div>
 
-    <div class="card" style="margin-bottom: 5px">
-      <el-table :data="data.tableData" border style="width: 89%" @selection-change="handleSelectionChange" :header-cell-style="{ color: '#333', backgroundColor: '#eaf4ff' }">
+    <div class="card" style="margin-bottom: 5px; margin-left: 3px">
+      <el-table :data="data.tableData" border style="width: 1300px" @selection-change="handleSelectionChange" :header-cell-style="{ color: '#333', backgroundColor: '#eaf4ff' }">
         <el-table-column type="selection" width="60" />
         <el-table-column prop="id" label="编号" width="60"/>
         <el-table-column prop="username" label="用户名" width="180"/>
@@ -40,7 +38,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="pagination-container" style="width: 89%">
+    <div class="pagination-container" style="width: 1300px; margin-left: 3px">
       <el-pagination
           v-model:current-page="data.pageNum"
           v-model:page-size="data.pageSize"
@@ -108,6 +106,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import { ref } from 'vue';
 
 const data = reactive({
+  user: JSON.parse(localStorage.getItem('code_user') || '{}'),
   username: null,
   status: null,
   pageNum: 1,

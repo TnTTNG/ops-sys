@@ -9,6 +9,7 @@ import ops.example.backend.entity.Admin;
 import ops.example.backend.exception.CustomerException;
 import ops.example.backend.exception.UsersException;
 import ops.example.backend.mapper.AdminMapper;
+import ops.example.backend.utils.TokenUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +25,6 @@ public class AdminService {
 
     @Resource
     AdminMapper adminMapper;
-
     public void add(Admin admin) throws CustomerException {
         Admin dbuser = adminMapper.selectByUsername(admin.getUsername());
         if (dbuser != null) {
@@ -59,6 +59,10 @@ public class AdminService {
         }
     }
 
+    public Admin selectById(String id) {
+        return adminMapper.selectById(id);
+    }
+
     public List<Admin> selectAll() {
         return adminMapper.selectAll(null);
     }
@@ -69,6 +73,9 @@ public class AdminService {
      * @param pageSize
      */
     public PageInfo<Admin> selectPage(Integer pageNum, Integer pageSize, Admin admin) {
+
+        Account currentUser = TokenUtils.getCurrentUser();
+
         // 开启分页查询
         PageHelper.startPage(pageNum, pageSize);
         List<Admin> adminList = adminMapper.selectAll(admin);
@@ -86,7 +93,11 @@ public class AdminService {
         if (!dbUser.getPassword().equals(account.getPassword())) {
             throw new CustomerException("账号或密码错误");
         }
-
+        // 创建token并返回给前端
+        String token = TokenUtils.createToken(dbUser.getId() + "-" + "ADMIN", dbUser.getPassword());
+        dbUser.setToken(token);
         return dbUser;
     }
+
+
 }
