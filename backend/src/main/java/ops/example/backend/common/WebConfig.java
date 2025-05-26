@@ -19,7 +19,15 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login", "/register"); // 拦截除登录注册的接口
+                .excludePathPatterns(
+                    "/login",
+                    "/register",
+                    "/files/**",
+                    "/api/test/connection",
+                    "/api/test",
+                    "/websocket/**",
+                    "/api/websocket/**"
+                );
     }
 
     @Bean

@@ -1,54 +1,72 @@
 <template>
   <div>
-    <div class="card" style="margin-bottom: 5px; margin-left: 3px">
-      <el-input clearable @clear="load" style="width: 260px; margin-right: 5px" v-model="data.username" placeholder="请输入用户名查询" :prefix-icon="Search"></el-input>
-<!--      <el-input clearable @clear="load" style="width: 260px; margin-right: 5px" v-model="data.status" placeholder="请输入状态查询" :prefix-icon="Search"></el-input>-->
-      <el-select v-model="data.status" clearable @clear="load" placeholder="状态" style="width: 90px">
-        <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            :disabled="item.disabled"
-        />
-      </el-select>
-      <el-button style="margin-left: 5px" @click="load">查 询</el-button>
-      <el-button style="margin-left: 5px" @click="reset">重 置</el-button>
-    </div>
-    <div class="card" style="margin-bottom: 5px; margin-left: 3px">
-      <el-button type="primary" @click="handleAdd">新 增</el-button>
-      <el-button type="danger" @click="deleteBatch">批量删除</el-button>
-    </div>
+    <el-card style="margin-bottom: 5px;" :body-style="{ padding: '10px'}">
+<!--      <div  class="card" style="margin-bottom: 5px; margin-left: 3px">-->
+        <el-input clearable @clear="load" style="width: 260px; margin-left: 10px" v-model="data.username" placeholder="请输入用户名查询" :prefix-icon="Search"></el-input>
+  <!--      <el-input clearable @clear="load" style="width: 260px; margin-right: 5px" v-model="data.status" placeholder="请输入状态查询" :prefix-icon="Search"></el-input>-->
+        <el-select v-model="data.status" clearable @clear="load" placeholder="状态" style="width: 90px;margin-left: 5px">
+          <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              :disabled="item.disabled"
+          />
+        </el-select>
+        <el-button style="margin-left: 10px" @click="load">查 询</el-button>
+        <el-button style="margin-left: 5px" @click="reset">重 置</el-button>
+<!--      </div>-->
+    </el-card>
 
-    <div class="card" style="margin-bottom: 5px">
-      <el-table :data="data.tableData" border style="width: 1300px; margin-left: 3px" @selection-change="handleSelectionChange" :header-cell-style="{ color: '#333', backgroundColor: '#eaf4ff' }">
-        <el-table-column type="selection" width="60" />
-        <el-table-column prop="id" label="编号" width="60"/>
-        <el-table-column prop="username" label="用户名" width="180"/>
-        <el-table-column prop="nickname" label="权限" width="180"/>
-        <el-table-column prop="phone" label="电话" width="200"/>
-        <el-table-column prop="email" label="邮箱" width="200"/>
-        <el-table-column prop="createTime" label="创建时间" width="180"/>
-        <el-table-column prop="status" label="状态" width="100"/>
-        <el-table-column label="操作" width="180">
-          <template #default="scope">
-            <el-button type="primary" icon="Edit" circle @click="handleEdit(scope.row)"></el-button>
-            <el-button type="danger" icon="Delete" circle @click="del(scope.row.id)"></el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="pagination-container" style="width: 1300px; margin-left: 3px">
-      <el-pagination
-          v-model:current-page="data.pageNum"
-          v-model:page-size="data.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :page-sizes="[5, 10, 20]"
-          :total="data.total"
-          @current-change="load"
-          @size-change="load"
-      />
-    </div>
+    <el-card style="margin-bottom: 5px;" :body-style="{ padding: '10px'}">
+      <div class="card" style="margin-bottom: 5px; margin-left: 10px">
+        <el-button type="primary" @click="handleAdd">新 增</el-button>
+        <el-button type="danger" @click="deleteBatch">批量删除</el-button>
+      </div>
+    </el-card>
+
+    <el-card :body-style="{ padding: '10px'}">
+      <div class="card" style="margin-bottom: 5px; margin-left: 3px">
+        <el-table :data="data.tableData" border style="width: 100%" @selection-change="handleSelectionChange"
+                  :header-cell-style="{ color: '#333', backgroundColor: '#eaf4ff' }">
+          <el-table-column type="selection" width="60" />
+          <el-table-column prop="id" label="编号" width="60"/>
+          <el-table-column label="头像" width="100">
+            <template #default="scope">
+              <el-image v-if="scope.row.avatar" :src="scope.row.avatar" :preview-src-list="[scope.row.avatar]" :preview-teleported="true"
+                        style="width: 40px; height: 40px; border-radius: 50%; display: block "/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="username" label="用户名" width="180"/>
+          <el-table-column prop="nickname" label="权限" width="180"/>
+          <el-table-column prop="phone" label="电话" />
+          <el-table-column prop="email" label="邮箱" />
+          <el-table-column prop="createTime" label="创建时间" />
+          <el-table-column prop="status" label="状态" width="100"/>
+          <el-table-column label="操作" width="120">
+            <template #default="scope">
+              <el-button type="primary" icon="Edit" circle @click="handleEdit(scope.row)"></el-button>
+              <el-button type="danger" icon="Delete" circle @click="del(scope.row.id)"></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+  <!--    <div class="pagination-container" style="width: 1350px; margin-left: 3px">-->
+      <div class="card">
+        <el-pagination
+            v-model:current-page="data.pageNum"
+            v-model:page-size="data.pageSize"
+            layout="total, prev, pager, next"
+            :page-sizes="[20]"
+            :total="data.total"
+            @current-change="load"
+            @size-change="load"
+            style="margin-top: 10px; margin-left: 5px"
+            class="mt-4"
+        />
+      </div>
+  <!--    </div>-->
+    </el-card>
 
     <el-dialog title="管理员信息" v-model="data.FormVisible" width="500" destroy-on-close>
       <el-form ref="formRef" :model="data.form" :rules="data.rules" label-width="80px" style="padding: 20px 30px 10px 0">
@@ -62,7 +80,7 @@
         <el-form-item label="电话" prop="phone">
           <el-input v-model="data.form.phone" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="邮箱">
+        <el-form-item label="邮箱" prop="email">
           <el-input v-model="data.form.email" autocomplete="off" />
         </el-form-item>
         <el-form-item label="权限" prop="nickname">
@@ -86,6 +104,16 @@
                 :disabled="item.disabled"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <el-upload
+              action="http://localhost:9999/files/upload"
+              :headers="{ token: data.user.token }"
+              :on-success="handleFileSuccess"
+              :list-type="picture"
+          >
+            <el-button >上传头像</el-button>
+          </el-upload>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -295,6 +323,26 @@ const deleteBatch = () => {
     })
   }).catch(err => {})
 }
+
+const handleFileSuccess = (res) => {
+  if (res.code === '200') {
+    ElMessage.success('上传成功');
+    // 更新表单中的头像
+    data.form.avatar = res.data;
+    
+    // 更新localStorage中的用户信息
+    const user = JSON.parse(localStorage.getItem('code_user') || '{}');
+    if (user.id === data.form.id) {  // 如果是当前用户
+      user.avatar = res.data;
+      localStorage.setItem('code_user', JSON.stringify(user));
+    }
+    
+    // 刷新表格数据
+    load();
+  } else {
+    ElMessage.error(res.msg || '上传失败');
+  }
+};
 </script>
 
 <style scoped>

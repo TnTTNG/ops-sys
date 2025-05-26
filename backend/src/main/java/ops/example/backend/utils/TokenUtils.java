@@ -33,6 +33,7 @@ public class TokenUtils {
     static AdminService staticAdminService;
     static UserService staticUserService;
 
+
     // springboot工程启动后会加载这段代码
     @PostConstruct
     public void init() {

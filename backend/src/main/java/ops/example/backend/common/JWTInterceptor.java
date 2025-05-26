@@ -1,9 +1,9 @@
 package ops.example.backend.common;
 
-import cn.hutool.core.util.StrUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +14,11 @@ import ops.example.backend.service.UserService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
+
 /**
  * @author ZhanHui TONG
  * @version 1.0
@@ -23,6 +28,20 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class JWTInterceptor implements HandlerInterceptor {
 
+    // 白名单路径
+    private static final List<String> WHITE_LIST = Arrays.asList(
+            "/api/test/connection",  // 测试连接接口
+            "/api/test",  // 测试连接接口
+            "/admin/login",      // 登录接口
+            "/api/admin/register",   // 注册接口
+            "/websocket",           // WebSocket接口
+            "/websocket/user",      // WebSocket用户接口
+            "/api/websocket",       // WebSocket测试接口
+            "/websocket/broadcast"  // WebSocket广播接口
+    );
+
+    private static final Pattern JWT_PATTERN = Pattern.compile("^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$");
+
     @Resource
     AdminService adminService;
     @Resource
@@ -30,23 +49,39 @@ public class JWTInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String token = request.getHeader("token");
-        if (StrUtil.isEmpty(token)) {
-            token = request.getParameter("token");
+        // 放行OPTIONS请求
+        if ("OPTIONS".equals(request.getMethod())) {
+            return true;
         }
-        if (StrUtil.isBlank(token)) {
-            try {
-                throw new CustomerException("无权限操作");
-            } catch (CustomerException e) {
-                throw new RuntimeException(e);
-            }
+
+        // 获取请求路径
+        String requestURI = request.getRequestURI();
+
+        // 检查是否是白名单路径
+        if (WHITE_LIST.stream().anyMatch(requestURI::contains)) {
+            return true;
+        }
+
+        // 获取token
+        String token = request.getHeader("token");
+        if (token == null || token.isEmpty()) {
+            throw new CustomerException("401", "未登录");
+        }
+
+        // 验证token格式
+        if (!JWT_PATTERN.matcher(token).matches()) {
+            throw new CustomerException("401", "token格式错误");
         }
 
         Account account = null;
         try {
-            // 拿到token 的载荷数据
-            String audience = JWT.decode(token).getAudience().get(0);
+            // 验证token
+            DecodedJWT jwt = JWT.decode(token);
+            String audience = jwt.getAudience().get(0);
             String[] split = audience.split("-");
+            if (split.length != 2) {
+                throw new CustomerException("401", "token格式错误");
+            }
             String userId = split[0];
             String role = split[1];
 
@@ -54,33 +89,24 @@ public class JWTInterceptor implements HandlerInterceptor {
                 account = adminService.selectById(userId);
             } else if ("USER".equals(role)) {
                 account = userService.selectById(userId);
+            } else {
+                throw new CustomerException("401", "无效的用户角色");
             }
         } catch (Exception e) {
-            try {
-                throw new CustomerException("无权限操作");
-            } catch (CustomerException ex) {
-                throw new RuntimeException(ex);
-            }
+            throw new CustomerException("401", "token验证失败: " + e.getMessage());
         }
+
         if (account == null) {
-            try {
-                throw new CustomerException("无权限操作");
-            } catch (CustomerException e) {
-                throw new RuntimeException(e);
-            }
+            throw new CustomerException("401", "用户不存在");
         }
+
         try {
             // 验证签名
             JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(account.getPassword())).build();
             jwtVerifier.verify(token);
+            return true;
         } catch (Exception e) {
-            try {
-                throw new CustomerException("无权限操作");
-            } catch (CustomerException ex) {
-                throw new RuntimeException(ex);
-            }
+            throw new CustomerException("401", "token验证失败: " + e.getMessage());
         }
-
-        return true;
     }
 }

@@ -13,12 +13,13 @@
     </select>
 
     <insert id="insert">
-        insert into sys_user (username, password, nickname, phone, email, status)
-        values(#{username}, #{password}, #{nickname}, #{phone}, #{email}, #{status})
+        insert into sys_user (username, password, nickname, phone, email, status, avatar)
+        values(#{username}, #{password}, #{nickname}, #{phone}, #{email}, #{status}, #{avatar})
     </insert>
 
     <update id="updateById">
-        update `sys_user` set username = #{username}, nickname = #{nickname}, phone = #{phone}, email = #{email}, status = #{status}
+        update `sys_user` set username = #{username}, nickname = #{nickname},
+                              phone = #{phone}, email = #{email}, status = #{status}, avatar = #{avatar}
         where id = #{id}
     </update>
 </mapper>                             
