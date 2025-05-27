@@ -106,13 +106,25 @@
           </el-select>
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
+<!--          <el-upload-->
+<!--              action="http://localhost:9999/files/upload"-->
+<!--              :headers="{ token: data.user.token }"-->
+<!--              :on-success="handleFileSuccess"-->
+<!--              :list-type="picture"-->
+<!--          >-->
+<!--            <el-button >上传头像</el-button>-->
+<!--          </el-upload>-->
           <el-upload
+              class="avatar-uploader"
               action="http://localhost:9999/files/upload"
-              :headers="{ token: data.user.token }"
+              :show-file-list="true"
               :on-success="handleFileSuccess"
-              :list-type="picture"
+              :before-upload="beforeAvatarUpload"
+              :headers="{ token: data.user.token }"
+              :list-type="picture-card"
           >
-            <el-button >上传头像</el-button>
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -254,6 +266,19 @@ const update = () => {
         if (res.code === '200') {
           closeDialog()
           ElMessage.success('修改成功')
+
+          // 更新localStorage中的用户信息
+          const user = JSON.parse(localStorage.getItem('code_user') || '{}');
+          if (user.id === data.form.id) {  // 如果是当前用户
+            // 更新所有修改的字段
+            Object.keys(data.form).forEach(key => {
+              if (data.form[key] !== undefined) {
+                user[key] = data.form[key];
+              }
+            });
+            localStorage.setItem('code_user', JSON.stringify(user));
+          }
+
           load()
         } else {
           // 根据错误码显示不同提示
@@ -346,6 +371,13 @@ const handleFileSuccess = (res) => {
 </script>
 
 <style scoped>
+
+.avatar-uploader .avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+
 .error-message {
   color: #f56c6c;
   font-size: 14px;
@@ -411,4 +443,28 @@ const handleFileSuccess = (res) => {
   height: 30px;
   line-height: 30px;
 }
+</style>
+
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 78px;
+  height: 78px;
+  text-align: center;
+}
+
 </style>

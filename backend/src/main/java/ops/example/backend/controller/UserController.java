@@ -35,6 +35,12 @@ public class UserController {
         userService.update(user);
         return Result.success();
     }
+
+    @PutMapping("/updatePassword")
+    public Result updatePassword(@RequestBody User user) throws CustomerException { // @RequestBody 接收前端传来的 json参数
+        userService.updatePassword(user);
+        return Result.success();
+    }
     @DeleteMapping("/delete/{id}")
     public Result delete(@PathVariable Integer id) throws CustomerException { // @PathVariable 接收前端传来的 路径参数
         userService.deleteById(id);

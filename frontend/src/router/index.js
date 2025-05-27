@@ -11,7 +11,8 @@ const router = createRouter({
         { path: 'admin', meta: { name: '用户管理 / 超级管理员信息', meta: { requiresAuth: true} }, component: () => import('@/views/Admin.vue')},
         { path: 'user', meta: { name: '用户管理 / 普通管理员信息', meta: { requiresAuth: true} }, component: () => import('@/views/User.vue')},
         // { path: 'person', meta: { name: '个人信息', meta: { requiresAuth: true} }, component: () => import('@/views/Person.vue')}
-        { path: 'person', meta:{ name: '个人信息'}, component: () => import('@/views/Person.vue')}
+        { path: 'person', meta:{ name: '个人信息'}, component: () => import('@/views/Person.vue')},
+        { path: 'updatePassword', meta:{ name: '修改密码'}, component: () => import('@/views/UpdatePassword.vue')}
       ]
     },
     { path: '/login', component: () => import('@/views/Login.vue'), meta: { requiresAuth: false} },

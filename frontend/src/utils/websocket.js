@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus';
+import router from "@/router/index.js";
 
 class WebSocketClient {
     constructor() {
@@ -13,6 +14,7 @@ class WebSocketClient {
         const user = JSON.parse(localStorage.getItem('code_user') || '{}');
         if (!user.token) {
             console.error('WebSocket连接失败: 未找到token');
+            router.push('/login');
             ElMessage.error('WebSocket连接失败: 请先登录');
             return;
         }

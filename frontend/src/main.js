@@ -17,8 +17,8 @@ app.config.errorHandler = (err, vm, info) => {
 }
 
 // 初始化WebSocket连接
-app.config.globalProperties.$ws = websocketClient
-websocketClient.connect()
+// app.config.globalProperties.$ws = websocketClient
+// websocketClient.connect()
 
 app.use(router)
 app.use(ElementPlus, {

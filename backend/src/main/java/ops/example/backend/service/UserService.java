@@ -100,4 +100,17 @@ public class UserService {
     public void register(User user) throws CustomerException {
         this.add(user);
     }
+
+    public void updatePassword(User user) throws CustomerException {
+        String id = user.getId().toString();
+        // 验证原密码是否正确
+        User dbUser = userMapper.selectById(id);
+        if (dbUser == null) {
+            throw new CustomerException("用户不存在");
+        }
+        if (!dbUser.getPassword().equals(user.getOldPassword())) {
+            throw new CustomerException("原密码错误");
+        }
+        userMapper.updatePassword(user);
+    }
 }

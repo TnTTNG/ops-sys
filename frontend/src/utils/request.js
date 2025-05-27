@@ -17,11 +17,9 @@ const isValidToken = (token) => {
 // 可以自请求发送前对请求做一些处理
 request.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/json;charset=utf-8';
-    
-    // 获取token
+
     let token = localStorage.getItem('token');
-    // 如果localStorage中没有token，尝试从sessionStorage获取
-    if (!token) {
+    if (token) {
         token = sessionStorage.getItem('token');
     }
     

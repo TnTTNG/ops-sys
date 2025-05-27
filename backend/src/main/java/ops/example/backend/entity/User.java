@@ -26,6 +26,7 @@ public class User extends Account{
     private Integer deleted;
     private String role;
     private String token;
+    private String oldPassword;  // 用于修改密码时验证原密码
 
     public Integer getId() {
         return id;
@@ -132,5 +133,13 @@ public class User extends Account{
     @Override
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }
