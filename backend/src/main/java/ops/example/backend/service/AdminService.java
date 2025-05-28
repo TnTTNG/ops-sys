@@ -100,4 +100,16 @@ public class AdminService {
     }
 
 
+    public void updatePassword(Admin admin) {
+        String id = admin.getId().toString();
+        // 验证原密码是否正确
+        Admin admin1 = adminMapper.selectById(id);
+        if (admin1 == null) {
+            throw new CustomerException("用户不存在");
+        }
+        if (!admin1.getPassword().equals(admin.getOldPassword())) {
+            throw new CustomerException("原密码错误");
+        }
+        adminMapper.updatePassword(admin);
+    }
 }

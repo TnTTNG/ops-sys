@@ -1,20 +1,20 @@
 <template>
   <div>
     <!-- 头部区域开始 -->
-    <div style="height: 60px; display: flex;">
-      <div style="width: 220px; display: flex; align-items: center; padding-left: 13px; background-color: #3a456b">
+    <div style="height: 80px; display: flex;">
+      <div style="width: 250px; display: flex; align-items: center; padding-left: 13px; background-color: #3a456b">
         <CloudLogo
-            :size="40"
+            :size="45"
             :colors="{
           primaryStart: '#d4e2ec',
           primaryEnd: '#098ad9',
           module: '#34495E',
           dataFlow: '#27AE60'
         }"/>
-        <span style="font-size: 18px; font-weight: bold; color: #f1f1f1; margin-left: 3px">云上运维管理平台</span>
+        <span style="font-size: 20px; font-weight: bold; color: #f1f1f1; margin-left: 3px">云上运维管理平台</span>
       </div>
       <div style="flex: 1; display: flex; align-items: center; padding-left: 20px; border-bottom: 1px solid #ddd">
-        <span style="margin-right: 5px; cursor: pointer" @click="router.push('/manager/home')">主页</span> / <span style="margin-left: 5px">{{ router.currentRoute.value.meta.name}}</span>
+        <span style="font-size: 18px;margin-right: 5px; cursor: pointer" @click="router.push('/manager')">主页</span> / <span style="font-size:18px; margin-left: 5px">{{ router.currentRoute.value.meta.name}}</span>
       </div>
       <div style="width: fit-content; padding-right: 20px; display: flex; align-items: center; border-bottom: 1px solid #ddd">
         <el-dropdown>
@@ -39,20 +39,42 @@
     <!--  下方区域开始 -->
     <div style="display: flex">
       <!--  菜单区域开始 -->
-      <div style="width: 220px;">
+      <div style="width: 250px;">
         <el-menu router :default-active="router.currentRoute.value.path" style="min-height: calc(100vh - 60px)">
           <el-menu-item index="/manager/home">
-            <el-icon><House /></el-icon>
-            <span>首页</span>
+            <svg-icon name="monitoring" :size="16" />
+            <span>工作台</span>
           </el-menu-item>
-          <el-sub-menu index="1">
+          <el-sub-menu v-if="data.user.role === 'ADMIN'" index="1">
             <template #title>
-              <el-icon><location /></el-icon>
+              <svg-icon name="用户管理" :size="19" />
               <span>用户管理</span>
             </template>
-            <el-menu-item index="/manager/admin">超级管理员信息</el-menu-item>
-            <el-menu-item index="/manager/user">普通管理员信息</el-menu-item>
+            <el-menu-item index="/manager/admin">
+              <el-icon><UserFilled /></el-icon>
+              <span>超级管理员</span>
+            </el-menu-item>
+            <el-menu-item index="/manager/user">
+              <el-icon><UserFilled /></el-icon>
+              <span>管理员</span>
+            </el-menu-item>
           </el-sub-menu>
+          <el-menu-item>
+            <svg-icon name="ecs" :size="20" />
+            <span>资源管理</span>
+          </el-menu-item>
+          <el-menu-item>
+            <svg-icon name="告警信息" :size="18" />
+            <span>监控告警</span>
+          </el-menu-item>
+          <el-menu-item>
+            <svg-icon name="日志管理" :size="20" />
+            <span>日志管理</span>
+          </el-menu-item>
+          <el-menu-item>
+            <svg-icon name="任务调度" :size="19" />
+            <span>任务调度</span>
+          </el-menu-item>
         </el-menu>
       </div>
       <!--  菜单区域结束 -->
@@ -74,6 +96,7 @@
 import router from "@/router/index.js";
 import CloudLogo from "@/assets/CloudLogo.vue";
 import { reactive } from "vue";
+import SvgIcon from "@/components/SvgIcon/Index.vue";
 
 const data = reactive({
   user: JSON.parse(localStorage.getItem('code_user') || "{}")
@@ -88,6 +111,12 @@ const updateUser = () => {
   data.user = JSON.parse(localStorage.getItem('code_user') || "{}")
 }
 
+// export default {
+//   name: "Manager",
+//   components: {
+//     CustomIcon
+//   }
+// }
 </script>
 
 <style>

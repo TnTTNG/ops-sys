@@ -6,7 +6,9 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import SvgIcon from "@/components/SvgIcon/index.vue";
 import { websocketClient } from './utils/websocket'
+import icons from './assets/icons'
 
 const app = createApp(App)
 
@@ -25,7 +27,14 @@ app.use(ElementPlus, {
     locale:zhCn,
 })
 app.mount('#app')
+// app.component('SvgIcon', SvgIcon)
 
+// 注册所有Element Plus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+}
+
+// 注册自定义SVG图标
+for (const [key, component] of Object.entries(icons)) {
     app.component(key, component)
 }

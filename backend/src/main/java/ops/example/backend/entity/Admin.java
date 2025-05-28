@@ -26,6 +26,7 @@ public class Admin extends Account{
     private Integer deleted;
     private String role;
     private String token;
+    private String oldPassword;
 
 
     public Integer getId() {
@@ -132,5 +133,13 @@ public class Admin extends Account{
     @Override
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }

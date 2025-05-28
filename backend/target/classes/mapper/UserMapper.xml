@@ -22,6 +22,7 @@
                           phone = #{phone}, email = #{email}, status = #{status}, avatar = #{avatar}
         where id = #{id}
     </update>
+
     <update id="updatePassword">
         update `user` set password = #{password} where id = #{id}
     </update>

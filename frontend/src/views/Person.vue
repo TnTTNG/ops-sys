@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card style="width: 50%">
+    <el-card style="width: 50%; margin: 5px auto">
       <div class="person_info">
         <div class="general_avatar">
           <img v-if="data.user?.avatar" style="width: 92px; height: 92px; border-radius: 100%" :src="data.user?.avatar" />
@@ -9,7 +9,7 @@
         <div class="general_username">
           <span class="user_info">
             <span v-if="data.user?.username" style="font-size: x-large"> {{ data.user?.username }} </span>
-<!--          <span v-if="data.user?.username" style="font-size: x-large"> USER </span>-->
+            <!--          <span v-if="data.user?.username" style="font-size: x-large"> USER </span>-->
             <div v-else class="username" style="margin-left: 10px; font-size: x-large"> USER </div>
             <span v-if="data.user?.nickname" style="font-size: x-large"> {{ data.user?.nickname }} </span>
             <div v-else class="nickname" style="margin-left: 10px; font-size: x-large"> NICKNAME </div>
@@ -17,7 +17,7 @@
         </div>
       </div>
     </el-card>
-    <el-card style="width: 50%; margin-top: 5px">
+    <el-card style="width: 50%; margin: 5px auto">
       <el-form :model="data.user" label-width="auto" style="max-width: 400px">
         <el-form-item label="用户名">
           <el-input v-model="data.user.username" />
@@ -28,9 +28,9 @@
         <el-form-item label="电话">
           <el-input v-model="data.user.phone" />
         </el-form-item>
-        <el-form-item label="状态">
-          <el-input v-model="data.user.status" />
-        </el-form-item>
+<!--        <el-form-item label="状态">-->
+<!--          <el-input v-model="data.user.status" />-->
+<!--        </el-form-item>-->
         <el-form-item label="描述">
           <el-input v-model="form.desc" type="textarea" />
         </el-form-item>
@@ -83,7 +83,7 @@ const onSubmit = () => {
 const load = () => {
   request.get('/user/selectAll', {
   }).then(res => {
-      data.tableData = res.data.list
+    data.tableData = res.data.list
   })
 }
 load()
@@ -119,7 +119,7 @@ const update = () => {
 .person_info {
   display: flex;
   flex-direction: inherit;
-  //justify-content: center;
+  justify-content: center;
 }
 
 .general_avatar {

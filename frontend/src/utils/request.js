@@ -19,15 +19,15 @@ request.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/json;charset=utf-8';
 
     let token = localStorage.getItem('token');
-    if (token) {
-        token = sessionStorage.getItem('token');
-    }
+    // if (token) {
+    //     token = sessionStorage.getItem('token');
+    // }
     
     if (token) {
         if (!isValidToken(token)) {
             ElMessage.error('token格式不正确，请重新登录');
             localStorage.removeItem('token');
-            sessionStorage.removeItem('token');
+            // sessionStorage.removeItem('token');
             router.push('/login');
             return Promise.reject('token格式不正确');
         }
@@ -56,7 +56,7 @@ request.interceptors.response.use(
         if (newToken) {
             if (isValidToken(newToken)) {
                 localStorage.setItem('token', newToken);
-                sessionStorage.setItem('token', newToken);
+                // sessionStorage.setItem('token', newToken);
             } else {
                 ElMessage.error('收到的新token格式不正确');
             }
@@ -71,7 +71,7 @@ request.interceptors.response.use(
         if (res.code === '200' && (response.config.url.includes('/login') || response.config.url.includes('/register'))) {
             if (res.data && res.data.token) {
                 localStorage.setItem('token', res.data.token);
-                sessionStorage.setItem('token', res.data.token);
+                // sessionStorage.setItem('token', res.data.token);
             }
         }
         
@@ -79,7 +79,7 @@ request.interceptors.response.use(
             ElMessage.error(res.msg || '请求失败')
             if (res.msg && (res.msg.includes('token') || res.msg.includes('登录'))) {
                 localStorage.removeItem('token');
-                sessionStorage.removeItem('token');
+                // sessionStorage.removeItem('token');
                 router.push('/login')
             }
             return Promise.reject(res)
@@ -102,7 +102,7 @@ request.interceptors.response.use(
         } else if (error.response.status === 401) {
             ElMessage.error('登录已过期，请重新登录')
             localStorage.removeItem('token')
-            sessionStorage.removeItem('token')
+            // sessionStorage.removeItem('token')
             router.push('/login')
         } else {
             ElMessage.error(errorMsg)

@@ -1,12 +1,14 @@
 import { fileURLToPath, URL } from 'node:url'
 
-// import { defineConfig } from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
-import {defineConfig} from "vite";
+import path from 'path'
+import svgLoader from 'vite-svg-loader'
+
 // https://vite.dev/config/
 
 export default defineConfig({
@@ -23,6 +25,7 @@ export default defineConfig({
           ElementPlusResolver({importStyle:"sass"})
       ],
     }),
+    svgLoader()
   ],
   css: {
     preprocessorOptions: {
@@ -33,7 +36,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      // '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': path.resolve(__dirname, 'src')
     },
   },
 })

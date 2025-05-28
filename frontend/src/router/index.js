@@ -4,10 +4,10 @@ import { ElMessage } from 'element-plus'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/manager/home', meta: { requiresAuth: true}},
+    { path: '/', redirect: '/manager', meta: { requiresAuth: true}},
     { path: '/manager',component: () => import('@/views/Manager.vue'), meta: { requiresAuth: true},
       children: [
-        { path: 'home', meta: { name: '首页', meta: { requiresAuth: true} }, component: () => import('@/views/Home.vue')},
+        { path: 'home', meta: { name: '工作台', meta: { requiresAuth: true} }, component: () => import('@/views/Home.vue')},
         { path: 'admin', meta: { name: '用户管理 / 超级管理员信息', meta: { requiresAuth: true} }, component: () => import('@/views/Admin.vue')},
         { path: 'user', meta: { name: '用户管理 / 普通管理员信息', meta: { requiresAuth: true} }, component: () => import('@/views/User.vue')},
         // { path: 'person', meta: { name: '个人信息', meta: { requiresAuth: true} }, component: () => import('@/views/Person.vue')}
@@ -22,24 +22,24 @@ const router = createRouter({
   ]
 })
 
-// router.beforeEach((to, from, next) => {
-//   const userInfo = localStorage.getItem('code_user')
-//
-//   if (to.meta.requiresAuth) {
-//     if (!userInfo) {
-//       ElMessage.warning('请先登录')
-//       next({ path: '/login'})
-//     } else {
-//       // 已登录，允许访问
-//       next()
-//     }
-//   } else {
-//     if (to.path === '/login' && userInfo) {
-//       next({ path: '/'})
-//     } else {
-//       next()
-//     }
-//
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const userInfo = localStorage.getItem('code_user')
+
+  if (to.meta.requiresAuth) {
+    if (!userInfo) {
+      ElMessage.warning('请先登录')
+      next({ path: '/login'})
+    } else {
+      // 已登录，允许访问
+      next()
+    }
+  } else {
+    if (to.path === '/login' && userInfo) {
+      next({ path: '/'})
+    } else {
+      next()
+    }
+
+  }
+})
 export default router

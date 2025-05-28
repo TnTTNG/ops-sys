@@ -35,6 +35,13 @@ public class AdminController {
         adminService.update(admin);
         return Result.success();
     }
+
+    @PutMapping("/updatePassword")
+    public Result updatePassword(@RequestBody Admin admin) throws CustomerException { // @RequestBody 接收前端传来的 json参数
+        adminService.updatePassword(admin);
+        return Result.success();
+    }
+
     @DeleteMapping("/delete/{id}")
     public Result delete(@PathVariable Integer id) throws CustomerException { // @PathVariable 接收前端传来的 路径参数
         adminService.deleteById(id);

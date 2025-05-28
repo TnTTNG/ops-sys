@@ -27,4 +27,7 @@ public interface AdminMapper {
 
     @Select("select * from sys_user where id = #{id}")
     Admin selectById(String id);
+
+    void updatePassword(Admin admin);
+
 }

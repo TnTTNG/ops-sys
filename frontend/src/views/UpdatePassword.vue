@@ -82,7 +82,13 @@ const updatePassword = () => {
       // } else {
       //   url = '/user/updatePassword'
       // }
-      request.put('/user/updatePassword', {
+      let url;
+      if (user.role === 'admin') {
+        url = '/admin/updatePassword'
+      } else {
+        url = '/user/updatePassword'
+      }
+      request.put(url, {
         id: user.id,
         oldPassword: form.oldPassword,
         password: form.newPassword
