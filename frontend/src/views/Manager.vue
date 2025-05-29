@@ -59,10 +59,21 @@
               <span>管理员</span>
             </el-menu-item>
           </el-sub-menu>
-          <el-menu-item>
-            <svg-icon name="ecs" :size="20" />
-            <span>资源管理</span>
-          </el-menu-item>
+
+          <el-sub-menu>
+            <template #title>
+              <svg-icon name="ecs" :size="20" />
+              <span>资源管理</span>
+            </template>
+            <el-menu-item index="/manager/rds">
+<!--              <el-icon><UserFilled /></el-icon>-->
+              <span>数据库管理</span>
+            </el-menu-item>
+<!--            <el-menu-item index="/manager/user">-->
+<!--              <el-icon><UserFilled /></el-icon>-->
+<!--              <span>管理员</span>-->
+<!--            </el-menu-item>-->
+          </el-sub-menu>
           <el-menu-item>
             <svg-icon name="告警信息" :size="18" />
             <span>监控告警</span>

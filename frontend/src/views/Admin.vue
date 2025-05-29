@@ -264,6 +264,19 @@ const update = () => {
         if (res.code === '200') {
           closeDialog()
           ElMessage.success('修改成功')
+
+          // 更新localStorage中的用户信息
+          const user = JSON.parse(localStorage.getItem('code_user') || '{}');
+          if (user.id === data.form.id) {  // 如果是当前用户
+            // 更新所有修改的字段
+            Object.keys(data.form).forEach(key => {
+              if (data.form[key] !== undefined) {
+                user[key] = data.form[key];
+              }
+            });
+            localStorage.setItem('code_user', JSON.stringify(user));
+          }
+
           load()
         } else {
           // 根据错误码显示不同提示
