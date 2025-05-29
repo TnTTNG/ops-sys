@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ops.example.backend.aliyun.mapper.DescribeInstancesMapper">
+    <resultMap id="BaseResultMap" type="ops.example.backend.aliyun.entity.DescribeInstances">
+        <id column="id" property="id"/>
+        <result column="instance_id" property="instanceId"/>
+        <result column="host_name" property="hostName"/>
+        <result column="memory" property="memory"/>
+        <result column="cpu" property="cpu"/>
+        <result column="cpu_options" property="cpuOptions"/>
+        <result column="internet_max_bandwidth_out" property="internetMaxBandwidthOut"/>
+        <result column="os_name" property="osName"/>
+        <result column="image_id" property="imageId"/>
+        <result column="status" property="status"/>
+        <result column="public_ip_address" property="publicIpAddress"/>
+        <result column="expired_time" property="expiredTime"/>
+        <result column="instance_type" property="instanceType"/>
+        <result column="region_id" property="regionId"/>
+        <result column="zone_id" property="zoneId"/>
+        <result column="instance_name" property="instanceName"/>
+        <result column="description" property="description"/>
+        <result column="instance_type_family" property="instanceTypeFamily"/>
+        <result column="os_type" property="osType"/>
+        <result column="internet_charge_type" property="internetChargeType"/>
+        <result column="internet_max_bandwidth_in" property="internetMaxBandwidthIn"/>
+        <result column="vpc_id" property="vpcId"/>
+        <result column="v_switch_id" property="vSwitchId"/>
+        <result column="private_ip_address" property="privateIpAddress"/>
+        <result column="creation_time" property="creationTime"/>
+        <result column="start_time" property="startTime"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM ecs_instance
+        <where>
+            <if test="instanceId != null and instanceId != ''">
+                AND instance_id = #{instanceId}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectTotal" resultType="int">
+        SELECT COUNT(*) FROM ecs_instance
+        <where>
+            <if test="instanceId != null and instanceId != ''">
+                AND instance_id = #{instanceId}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO ecs_instance (
+            instance_id, host_name, memory, cpu, cpu_options,
+            internet_max_bandwidth_out, os_name, image_id, status,
+            public_ip_address, expired_time, instance_type, region_id,
+            zone_id, instance_name, description, instance_type_family,
+            os_type, internet_charge_type, internet_max_bandwidth_in,
+            vpc_id, v_switch_id, private_ip_address, creation_time,
+            start_time, created_at, updated_at
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.instanceId}, #{item.hostName}, #{item.memory},
+            #{item.cpu}, #{item.cpuOptions}, #{item.internetMaxBandwidthOut},
+            #{item.osName}, #{item.imageId}, #{item.status},
+            #{item.publicIpAddress}, #{item.expiredTime}, #{item.instanceType},
+            #{item.regionId}, #{item.zoneId}, #{item.instanceName},
+            #{item.description}, #{item.instanceTypeFamily}, #{item.osType},
+            #{item.internetChargeType}, #{item.internetMaxBandwidthIn},
+            #{item.vpcId}, #{item.vSwitchId}, #{item.privateIpAddress},
+            #{item.creationTime}, #{item.startTime}, #{item.createdAt},
+            #{item.updatedAt}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            host_name = VALUES(host_name),
+            memory = VALUES(memory),
+            cpu = VALUES(cpu),
+            cpu_options = VALUES(cpu_options),
+            internet_max_bandwidth_out = VALUES(internet_max_bandwidth_out),
+            os_name = VALUES(os_name),
+            image_id = VALUES(image_id),
+            status = VALUES(status),
+            public_ip_address = VALUES(public_ip_address),
+            expired_time = VALUES(expired_time),
+            instance_type = VALUES(instance_type),
+            region_id = VALUES(region_id),
+            zone_id = VALUES(zone_id),
+            instance_name = VALUES(instance_name),
+            description = VALUES(description),
+            instance_type_family = VALUES(instance_type_family),
+            os_type = VALUES(os_type),
+            internet_charge_type = VALUES(internet_charge_type),
+            internet_max_bandwidth_in = VALUES(internet_max_bandwidth_in),
+            vpc_id = VALUES(vpc_id),
+            v_switch_id = VALUES(v_switch_id),
+            private_ip_address = VALUES(private_ip_address),
+            creation_time = VALUES(creation_time),
+            start_time = VALUES(start_time),
+            updated_at = VALUES(updated_at)
+    </insert>
+</mapper>

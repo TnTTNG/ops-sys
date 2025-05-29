@@ -131,6 +131,12 @@
             <version>2.9.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>ecs20140526</artifactId>
+            <version>8.0.7</version>
+        </dependency>
+
     </dependencies>
 
     <build>

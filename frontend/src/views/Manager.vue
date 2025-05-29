@@ -69,6 +69,10 @@
 <!--              <el-icon><UserFilled /></el-icon>-->
               <span>数据库管理</span>
             </el-menu-item>
+            <el-menu-item index="/manager/ecs">
+<!--              <el-icon><UserFilled /></el-icon>-->
+              <span>云服务器管理</span>
+            </el-menu-item>
 <!--            <el-menu-item index="/manager/user">-->
 <!--              <el-icon><UserFilled /></el-icon>-->
 <!--              <span>管理员</span>-->

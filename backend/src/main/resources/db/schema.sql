@@ -8,4 +8,41 @@ CREATE TABLE IF NOT EXISTS rds_db_instance (
     engine_version VARCHAR(50),
     created_at DATETIME,
     updated_at DATETIME
-); 
+);
+
+-- 创建ECS实例表
+CREATE TABLE IF NOT EXISTS `ecs_instance` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `instance_id` varchar(64) NOT NULL COMMENT '实例ID',
+  `host_name` varchar(128) DEFAULT NULL COMMENT '主机名',
+  `memory` int DEFAULT NULL COMMENT '内存大小',
+  `cpu` int DEFAULT NULL COMMENT 'CPU核数',
+  `cpu_options` varchar(255) DEFAULT NULL COMMENT 'CPU选项',
+  `internet_max_bandwidth_out` int DEFAULT NULL COMMENT '公网出带宽',
+  `os_name` varchar(255) DEFAULT NULL COMMENT '操作系统名称',
+  `image_id` varchar(64) DEFAULT NULL COMMENT '镜像ID',
+  `status` varchar(32) DEFAULT NULL COMMENT '实例状态',
+  `public_ip_address` varchar(255) DEFAULT NULL COMMENT '公网IP地址',
+  `expired_time` datetime DEFAULT NULL COMMENT '过期时间',
+  `instance_type` varchar(64) DEFAULT NULL COMMENT '实例类型',
+  `region_id` varchar(32) DEFAULT NULL COMMENT '地域ID',
+  `zone_id` varchar(32) DEFAULT NULL COMMENT '可用区ID',
+  `instance_name` varchar(128) DEFAULT NULL COMMENT '实例名称',
+  `description` varchar(255) DEFAULT NULL COMMENT '实例描述',
+  `instance_type_family` varchar(64) DEFAULT NULL COMMENT '实例规格族',
+  `os_type` varchar(32) DEFAULT NULL COMMENT '操作系统类型',
+  `internet_charge_type` varchar(32) DEFAULT NULL COMMENT '网络计费类型',
+  `internet_max_bandwidth_in` int DEFAULT NULL COMMENT '公网入带宽',
+  `vpc_id` varchar(64) DEFAULT NULL COMMENT 'VPC ID',
+  `v_switch_id` varchar(64) DEFAULT NULL COMMENT '交换机ID',
+  `private_ip_address` varchar(255) DEFAULT NULL COMMENT '私网IP地址',
+  `creation_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `start_time` datetime DEFAULT NULL COMMENT '启动时间',
+  `created_at` datetime DEFAULT NULL COMMENT '记录创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '记录更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_instance_id` (`instance_id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_region` (`region_id`),
+  KEY `idx_zone` (`zone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='ECS实例信息表'; 

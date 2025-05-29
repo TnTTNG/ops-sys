@@ -13,7 +13,8 @@ const router = createRouter({
         // { path: 'person', meta: { name: '个人信息', meta: { requiresAuth: true} }, component: () => import('@/views/Person.vue')}
         { path: 'person', meta:{ name: '个人信息'}, component: () => import('@/views/Person.vue')},
         { path: 'updatePassword', meta:{ name: '修改密码'}, component: () => import('@/views/UpdatePassword.vue')},
-        { path: 'rds', meta:{ name: '数据库管理'}, component: () => import('@/views/aliyun/rds/RdsDbInstance.vue')}
+        { path: 'rds', meta:{ name: '数据库管理'}, component: () => import('@/views/aliyun/rds/RdsDbInstance.vue')},
+        { path: 'ecs', meta:{ name: '云服务器管理'}, component: () => import('@/views/aliyun/ecs/DescribeInstances.vue')}
       ]
     },
     { path: '/login', component: () => import('@/views/Login.vue'), meta: { requiresAuth: false} },
