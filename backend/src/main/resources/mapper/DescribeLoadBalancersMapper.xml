@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ops.example.backend.aliyun.mapper.DescribeLoadBalancersMapper">
+    <resultMap id="BaseResultMap" type="ops.example.backend.aliyun.entity.DescribeLoadBalancers$LoadBalancer">
+        <id column="id" property="id"/>
+        <result column="load_balancer_id" property="loadBalancerId"/>
+        <result column="load_balancer_name" property="loadBalancerName"/>
+        <result column="load_balancer_status" property="loadBalancerStatus"/>
+        <result column="address" property="address"/>
+        <result column="region_id" property="regionId"/>
+        <result column="region_id_alias" property="regionIdAlias"/>
+        <result column="master_zone_id" property="masterZoneId"/>
+        <result column="slave_zone_id" property="slaveZoneId"/>
+        <result column="network_type" property="networkType"/>
+        <result column="bandwidth" property="bandwidth"/>
+        <result column="load_balancer_spec" property="loadBalancerSpec"/>
+        <result column="pay_type" property="payType"/>
+        <result column="instance_charge_type" property="instanceChargeType"/>
+        <result column="internet_charge_type" property="internetChargeType"/>
+        <result column="internet_charge_type_alias" property="internetChargeTypeAlias"/>
+        <result column="resource_group_id" property="resourceGroupId"/>
+        <result column="vpc_id" property="vpcId"/>
+        <result column="v_switch_id" property="vSwitchId"/>
+        <result column="address_type" property="addressType"/>
+        <result column="address_ip_version" property="addressIPVersion"/>
+        <result column="delete_protection" property="deleteProtection"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_time_stamp" property="createTimeStamp"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM slb_instance
+        <where>
+            <if test="loadBalancerId != null and loadBalancerId != ''">
+                AND load_balancer_id = #{loadBalancerId}
+            </if>
+            <if test="status != null and status != ''">
+                AND load_balancer_status = #{status}
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectTotal" resultType="int">
+        SELECT COUNT(*) FROM slb_instance
+        <where>
+            <if test="loadBalancerId != null and loadBalancerId != ''">
+                AND load_balancer_id = #{loadBalancerId}
+            </if>
+            <if test="status != null and status != ''">
+                AND load_balancer_status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO slb_instance (
+            load_balancer_id, load_balancer_name, load_balancer_status,
+            address, region_id, region_id_alias,
+            master_zone_id, slave_zone_id, network_type, bandwidth,
+            load_balancer_spec, pay_type, instance_charge_type,
+            internet_charge_type, internet_charge_type_alias, resource_group_id,
+            vpc_id, v_switch_id, address_type, address_ip_version,
+            delete_protection, create_time, create_time_stamp,
+            created_at, updated_at
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.loadBalancerId}, #{item.loadBalancerName}, #{item.loadBalancerStatus},
+            #{item.address}, #{item.regionId}, #{item.regionIdAlias},
+            #{item.masterZoneId}, #{item.slaveZoneId}, #{item.networkType}, #{item.bandwidth},
+            #{item.loadBalancerSpec}, #{item.payType}, #{item.instanceChargeType},
+            #{item.internetChargeType}, #{item.internetChargeTypeAlias}, #{item.resourceGroupId},
+            #{item.vpcId}, #{item.vSwitchId}, #{item.addressType}, #{item.addressIPVersion},
+            #{item.deleteProtection}, #{item.createTime}, #{item.createTimeStamp},
+            #{item.createdAt}, #{item.updatedAt}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            load_balancer_name = VALUES(load_balancer_name),
+            load_balancer_status = VALUES(load_balancer_status),
+            address = VALUES(address),
+            region_id = VALUES(region_id),
+            region_id_alias = VALUES(region_id_alias),
+            master_zone_id = VALUES(master_zone_id),
+            slave_zone_id = VALUES(slave_zone_id),
+            network_type = VALUES(network_type),
+            bandwidth = VALUES(bandwidth),
+            load_balancer_spec = VALUES(load_balancer_spec),
+            pay_type = VALUES(pay_type),
+            instance_charge_type = VALUES(instance_charge_type),
+            internet_charge_type = VALUES(internet_charge_type),
+            internet_charge_type_alias = VALUES(internet_charge_type_alias),
+            resource_group_id = VALUES(resource_group_id),
+            vpc_id = VALUES(vpc_id),
+            v_switch_id = VALUES(v_switch_id),
+            address_type = VALUES(address_type),
+            address_ip_version = VALUES(address_ip_version),
+            delete_protection = VALUES(delete_protection),
+            create_time = VALUES(create_time),
+            create_time_stamp = VALUES(create_time_stamp),
+            updated_at = VALUES(updated_at)
+    </insert>
+</mapper>

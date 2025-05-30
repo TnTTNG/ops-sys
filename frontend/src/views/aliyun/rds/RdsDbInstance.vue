@@ -11,6 +11,11 @@
           <el-icon><Refresh /></el-icon>
           同步数据
         </el-button>
+        <el-switch
+          v-model="isAutoSync"
+          active-text="自动同步"
+          @change="handleAutoSyncChange"
+        />
       </div>
     </div>
     <div class="rds-db-instance-body">
@@ -21,20 +26,67 @@
           style="width: 100%"
           border
         >
-          <el-table-column prop="dbInstanceId" label="实例ID" width="220" />
-          <el-table-column prop="description" label="描述" width="180" />
-          <el-table-column prop="regionId" label="地域" width="120" />
-          <el-table-column prop="status" label="状态" width="100">
+          <el-table-column prop="dbInstanceId" label="实例ID" width="180" />
+          <el-table-column prop="dbInstanceDescription" label="实例描述" width="120" />
+          <el-table-column prop="dbInstanceStatus" label="状态" width="100">
             <template #default="scope">
-              <el-tag :type="getStatusType(scope.row.status)">
-                {{ scope.row.status }}
+              <el-tag :type="getStatusType(scope.row.dbInstanceStatus)">
+                {{ scope.row.dbInstanceStatus }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="engine" label="数据库类型" width="120" />
-          <el-table-column prop="engineVersion" label="数据库版本" width="120" />
-          <el-table-column prop="createdAt" label="创建时间" width="180" />
-          <el-table-column prop="updatedAt" label="更新时间" width="180" />
+          <el-table-column prop="engine" label="数据库类型" width="100" />
+          <el-table-column prop="engineVersion" label="数据库版本" width="100" />
+          <el-table-column prop="zoneId" label="可用区" width="100" />
+          <el-table-column prop="dbInstanceClass" label="实例规格" width="120" />
+          <el-table-column prop="createTime" label="创建时间" width="180">
+            <template #default="scope">
+              {{ formatCreateTime(scope.row.createTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="vSwitchId" label="交换机ID" width="180" />
+          <el-table-column prop="tipsLevel" label="提示级别" width="100" />
+          <el-table-column prop="deletionProtection" label="删除保护" width="100">
+            <template #default="scope">
+              <el-tag :type="scope.row.deletionProtection ? 'success' : 'info'">
+                {{ scope.row.deletionProtection ? '是' : '否' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="lockMode" label="锁定模式" width="100" />
+          <el-table-column prop="payType" label="付费类型" width="100" />
+          <el-table-column prop="dbInstanceStorageType" label="存储类型" width="120" />
+          <el-table-column prop="vpcId" label="专有网络ID" width="180" />
+          <el-table-column prop="connectionMode" label="连接模式" width="100" />
+          <el-table-column prop="connectionString" label="连接地址" width="180" />
+          <el-table-column prop="expireTime" label="过期时间" width="180">
+            <template #default="scope">
+              {{ formatCreateTime(scope.row.expireTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="dbInstanceMemory" label="内存(MB)" width="100" />
+          <el-table-column prop="resourceGroupId" label="资源组ID" width="180" />
+          <el-table-column prop="dbInstanceNetType" label="网络类型" width="100" />
+          <el-table-column prop="dbInstanceType" label="实例类型" width="100" />
+          <el-table-column prop="mutriORsignle" label="多可用区" width="100">
+            <template #default="scope">
+              <el-tag :type="scope.row.mutriORsignle ? 'success' : 'info'">
+                {{ scope.row.mutriORsignle ? '是' : '否' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="instanceNetworkType" label="实例网络类型" width="120" />
+          <el-table-column label="操作" width="120" fixed="right">
+            <template #default="scope">
+              <el-button
+                type="primary"
+                link
+                @click="handleOpenDMS(scope.row)"
+              >
+                管理数据库
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </div>
@@ -42,7 +94,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import request from '@/utils/request'
@@ -56,6 +108,8 @@ export default {
   setup() {
     const loading = ref(false)
     const tableData = ref([])
+    const isAutoSync = ref(false)
+    let syncTimer = null
 
     // const request = axios.create({
     //   baseURL: 'http://localhost:8888',
@@ -65,14 +119,21 @@ export default {
     const getRdsInstances = async () => {
       try {
         loading.value = true
+        console.log('开始获取RDS实例数据...')
         const res = await request.get('/rds/selectAll')
+        console.log('获取到的原始响应：', res)
+        
         if (res.code === '200') {
-          tableData.value = res.data
+          // 直接使用res.data，因为后端返回的是数组
+          tableData.value = Array.isArray(res.data) ? res.data : []
+          console.log('处理后的表格数据：', tableData.value)
         } else {
+          console.error('获取数据失败，错误码：', res.code)
           ElMessage.error(res.msg || '获取数据失败')
         }
       } catch (error) {
-        ElMessage.error('获取数据失败：' + error.message)
+        console.error('获取数据失败，详细错误：', error)
+        ElMessage.error('获取数据失败：' + (error.response?.data?.msg || error.message))
       } finally {
         loading.value = false
       }
@@ -82,18 +143,38 @@ export default {
     const handleSync = async () => {
       try {
         loading.value = true
+        console.log('开始同步RDS数据...')
         const res = await request.get('/rds/sync')
+        console.log('同步响应：', res)
         if (res.code === '200') {
           ElMessage.success(res.data)
           // 同步成功后刷新列表
           await getRdsInstances()
         } else {
+          console.error('同步失败，错误码：', res.code)
           ElMessage.error(res.msg || '同步失败')
         }
       } catch (error) {
-        ElMessage.error('同步失败：' + error.message)
+        console.error('同步失败，详细错误：', error)
+        ElMessage.error('同步失败：' + (error.response?.data?.msg || error.message))
       } finally {
         loading.value = false
+      }
+    }
+
+    // 处理自动同步开关变化
+    const handleAutoSyncChange = (value) => {
+      if (value) {
+        // 开启自动同步
+        syncTimer = setInterval(() => {
+          handleSync()
+        }, 5000) // 每5秒同步一次
+      } else {
+        // 关闭自动同步
+        if (syncTimer) {
+          clearInterval(syncTimer)
+          syncTimer = null
+        }
       }
     }
 
@@ -109,15 +190,39 @@ export default {
       return statusMap[status] || 'info'
     }
 
+    // 格式化创建时间
+    const formatCreateTime = (time) => {
+      if (!time) return ''
+      return time.replace('T', ' ').replace('Z', '')
+    }
+
+    // 打开DMS控制台
+    const handleOpenDMS = (row) => {
+      const dmsUrl = `https://dms.aliyun.com/?regionId=${row.regionId}&dbType=mysql&instanceId=${row.dbInstanceId}&instanceSource=RDS`
+      window.open(dmsUrl, '_blank')
+    }
+
     onMounted(() => {
       getRdsInstances()
+    })
+
+    onUnmounted(() => {
+      // 组件卸载时清除定时器
+      if (syncTimer) {
+        clearInterval(syncTimer)
+        syncTimer = null
+      }
     })
 
     return {
       loading,
       tableData,
+      isAutoSync,
       handleSync,
-      getStatusType
+      handleAutoSyncChange,
+      getStatusType,
+      formatCreateTime,
+      handleOpenDMS
     }
   }
 }
@@ -148,6 +253,7 @@ export default {
     &-actions {
       display: flex;
       gap: 10px;
+      align-items: center;
     }
   }
 

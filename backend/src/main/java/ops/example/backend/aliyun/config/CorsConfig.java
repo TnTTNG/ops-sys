@@ -15,7 +15,10 @@ public class CorsConfig {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
-        
+
+        // 暴露的响应头
+        config.addExposedHeader("*");
+        config.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         

@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-;
-
 /**
  * @author ZhanHui TONG
  * @version 1.0
@@ -27,8 +25,12 @@ public class RdsDbInstanceController {
 
     @GetMapping("/selectAll")
     public Result selectAll() {
-        List<RdsDbInstance> list = rdsDbInstanceService.selectAll();
-        return Result.success(list);
+        try {
+            List<RdsDbInstance> list = rdsDbInstanceService.selectAll();
+            return Result.success(list);
+        } catch (Exception e) {
+            return Result.error("获取RDS实例列表失败：" + e.getMessage());
+        }
     }
 
     /**

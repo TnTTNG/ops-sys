@@ -8,22 +8,53 @@
     
     <insert id="batchInsert" parameterType="java.util.List">
         INSERT INTO rds_db_instance (
-            db_instance_id, description, region_id, status,
-            engine, engine_version, created_at, updated_at
+            db_instance_id, db_instance_description, region_id, db_instance_status,
+            engine, engine_version, zone_id, db_instance_class, create_time,
+            v_switch_id, tips_level, deletion_protection, lock_mode, pay_type,
+            db_instance_storage_type, vpc_id, connection_mode,
+            connection_string, expire_time, db_instance_memory,
+            resource_group_id, db_instance_net_type, db_instance_type, mutri_orsignle,
+            instance_network_type, created_at, updated_at
         ) VALUES 
         <foreach collection="list" item="item" separator=",">
             (
-                #{item.dbInstanceId}, #{item.description}, #{item.regionId},
-                #{item.status}, #{item.engine}, #{item.engineVersion},
+                #{item.dbInstanceId}, #{item.dbInstanceDescription}, #{item.regionId},
+                #{item.dbInstanceStatus}, #{item.engine}, #{item.engineVersion},
+                #{item.zoneId}, #{item.dbInstanceClass}, #{item.createTime},
+                #{item.vSwitchId}, #{item.tipsLevel}, #{item.deletionProtection},
+                #{item.lockMode}, #{item.payType}, #{item.dbInstanceStorageType},
+                #{item.vpcId}, #{item.connectionMode},
+                #{item.connectionString}, #{item.expireTime},
+                #{item.dbInstanceMemory}, #{item.resourceGroupId}, #{item.dbInstanceNetType},
+                #{item.dbInstanceType}, #{item.mutriORsignle}, #{item.instanceNetworkType},
                 #{item.createdAt}, #{item.updatedAt}
             )
         </foreach>
         ON DUPLICATE KEY UPDATE
-            description = VALUES(description),
+            db_instance_description = VALUES(db_instance_description),
             region_id = VALUES(region_id),
-            status = VALUES(status),
+            db_instance_status = VALUES(db_instance_status),
             engine = VALUES(engine),
             engine_version = VALUES(engine_version),
+            zone_id = VALUES(zone_id),
+            db_instance_class = VALUES(db_instance_class),
+            create_time = VALUES(create_time),
+            v_switch_id = VALUES(v_switch_id),
+            tips_level = VALUES(tips_level),
+            deletion_protection = VALUES(deletion_protection),
+            lock_mode = VALUES(lock_mode),
+            pay_type = VALUES(pay_type),
+            db_instance_storage_type = VALUES(db_instance_storage_type),
+            vpc_id = VALUES(vpc_id),
+            connection_mode = VALUES(connection_mode),
+            connection_string = VALUES(connection_string),
+            expire_time = VALUES(expire_time),
+            db_instance_memory = VALUES(db_instance_memory),
+            resource_group_id = VALUES(resource_group_id),
+            db_instance_net_type = VALUES(db_instance_net_type),
+            db_instance_type = VALUES(db_instance_type),
+            mutri_orsignle = VALUES(mutri_orsignle),
+            instance_network_type = VALUES(instance_network_type),
             created_at = VALUES(created_at),
             updated_at = VALUES(updated_at)
     </insert>

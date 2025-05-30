@@ -42,3 +42,7 @@ jwt:
 logging:
   level:
     ops.example.backend: debug
+
+ssh:
+  username: root
+  password: Admin_01

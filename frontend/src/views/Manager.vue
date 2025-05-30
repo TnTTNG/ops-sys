@@ -73,6 +73,10 @@
 <!--              <el-icon><UserFilled /></el-icon>-->
               <span>云服务器管理</span>
             </el-menu-item>
+            <el-menu-item index="/manager/ens">
+<!--              <el-icon><UserFilled /></el-icon>-->
+              <span>负载均衡管理</span>
+            </el-menu-item>
 <!--            <el-menu-item index="/manager/user">-->
 <!--              <el-icon><UserFilled /></el-icon>-->
 <!--              <span>管理员</span>-->

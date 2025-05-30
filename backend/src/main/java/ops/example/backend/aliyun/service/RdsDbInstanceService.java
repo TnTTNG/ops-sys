@@ -54,11 +54,30 @@ public class RdsDbInstanceService {
         for (DescribeDBInstancesResponseBody.DescribeDBInstancesResponseBodyItemsDBInstance item : items) {
             RdsDbInstance instance = new RdsDbInstance();
             instance.setDbInstanceId(item.getDBInstanceId());
-            instance.setDescription(item.getDBInstanceDescription());
+            instance.setDbInstanceDescription(item.getDBInstanceDescription());
             instance.setRegionId(item.getRegionId());
-            instance.setStatus(item.getDBInstanceStatus());
+            instance.setDbInstanceStatus(item.getDBInstanceStatus());
             instance.setEngine(item.getEngine());
             instance.setEngineVersion(item.getEngineVersion());
+            instance.setZoneId(item.getZoneId());
+            instance.setDbInstanceClass(item.getDBInstanceClass());
+            instance.setCreateTime(item.getCreateTime());
+            instance.setVSwitchId(item.getVSwitchId());
+            instance.setTipsLevel(item.getTipsLevel());
+            instance.setDeletionProtection(item.getDeletionProtection());
+            instance.setLockMode(item.getLockMode());
+            instance.setPayType(item.getPayType());
+            instance.setDbInstanceStorageType(item.getDBInstanceStorageType());
+            instance.setVpcId(item.getVpcId());
+            instance.setConnectionMode(item.getConnectionMode());
+            instance.setConnectionString(item.getConnectionString());
+            instance.setExpireTime(item.getExpireTime());
+            instance.setDbInstanceMemory(item.getDBInstanceMemory());
+            instance.setResourceGroupId(item.getResourceGroupId());
+            instance.setDbInstanceNetType(item.getDBInstanceNetType());
+            instance.setDbInstanceType(item.getDBInstanceType());
+            instance.setMutriORsignle(item.getMutriORsignle());
+            instance.setInstanceNetworkType(item.getInstanceNetworkType());
             
             // 转换时间格式
             String createTime = item.getCreateTime();

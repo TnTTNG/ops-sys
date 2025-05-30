@@ -46,3 +46,31 @@ CREATE TABLE IF NOT EXISTS `ecs_instance` (
   KEY `idx_region` (`region_id`),
   KEY `idx_zone` (`zone_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='ECS实例信息表'; 
+
+-- 创建SLB负载均衡实例表
+CREATE TABLE IF NOT EXISTS `slb_instance` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `load_balancer_id` varchar(64) NOT NULL COMMENT '负载均衡实例ID',
+  `load_balancer_name` varchar(128) DEFAULT NULL COMMENT '负载均衡实例名称',
+  `load_balancer_status` varchar(32) DEFAULT NULL COMMENT '负载均衡实例状态',
+  `address` varchar(64) DEFAULT NULL COMMENT '负载均衡实例服务地址',
+  `ens_region_id` varchar(64) DEFAULT NULL COMMENT 'ENS节点ID',
+  `network_id` varchar(64) DEFAULT NULL COMMENT '网络ID',
+  `v_switch_id` varchar(64) DEFAULT NULL COMMENT '交换机ID',
+  `create_time` datetime DEFAULT NULL COMMENT '负载均衡实例创建时间',
+  `address_ip_version` varchar(16) DEFAULT NULL COMMENT 'IP版本',
+  `pay_type` varchar(32) DEFAULT NULL COMMENT '付费类型',
+  `region_id` varchar(32) DEFAULT NULL COMMENT '地域ID',
+  `vpc_id` varchar(64) DEFAULT NULL COMMENT 'VPC ID',
+  `address_type` varchar(32) DEFAULT NULL COMMENT '地址类型',
+  `bandwidth` int DEFAULT NULL COMMENT '带宽',
+  `master_zone_id` varchar(32) DEFAULT NULL COMMENT '主可用区ID',
+  `slave_zone_id` varchar(32) DEFAULT NULL COMMENT '备可用区ID',
+  `created_at` datetime DEFAULT NULL COMMENT '记录创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '记录更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_load_balancer_id` (`load_balancer_id`),
+  KEY `idx_slb_status` (`load_balancer_status`),
+  KEY `idx_slb_region` (`region_id`),
+  KEY `idx_slb_name` (`load_balancer_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='SLB负载均衡实例信息表'; 

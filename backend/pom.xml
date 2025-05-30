@@ -137,6 +137,30 @@
             <version>8.0.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>ens20171110</artifactId>
+            <version>9.0.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibabacloud-slb20140515</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>slb20140515</artifactId>
+            <version>3.3.27</version>
+        </dependency>
+
+        <!-- JSch SSH库 -->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.55</version>
+        </dependency>
     </dependencies>
 
     <build>
