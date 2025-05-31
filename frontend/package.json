@@ -14,6 +14,7 @@
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
     "axios": "^1.8.4",
+    "echarts": "^5.6.0",
     "element-plus": "^2.9.8",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",

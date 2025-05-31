@@ -25,6 +25,11 @@ public class DescribeInstancesController {
     @Resource
     DescribeInstancesService describeInstancesService;
 
+    @GetMapping("/selectId")
+     public Result selectId(@RequestParam String instanceId) {
+        DescribeInstances describeInstances = describeInstancesService.selectId(instanceId);
+        return Result.success(describeInstances);
+    }
     @GetMapping("/selectAll")
     public Result selectAll(@RequestParam(required = false) Integer pageNum,
                           @RequestParam(required = false) Integer pageSize,

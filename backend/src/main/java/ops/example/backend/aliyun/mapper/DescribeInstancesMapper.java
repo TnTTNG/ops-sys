@@ -3,6 +3,7 @@ package ops.example.backend.aliyun.mapper;
 import ops.example.backend.aliyun.entity.DescribeInstances;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -22,4 +23,7 @@ public interface DescribeInstancesMapper {
                    @Param("status") String status);
 
     int batchInsert(List<DescribeInstances> instances);
+
+    @Select("SELECT * FROM 'ecs_instance' WHERE instance_id = #{instanceId}")
+    DescribeInstances selectId(String instanceId);
 }

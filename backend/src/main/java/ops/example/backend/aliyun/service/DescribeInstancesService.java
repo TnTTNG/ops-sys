@@ -178,4 +178,8 @@ public class DescribeInstancesService {
         // 返回数据库中的实例总数
         return describeInstancesMapper.selectTotal(null, null);
     }
+
+    public DescribeInstances selectId(String instanceId) {
+         return describeInstancesMapper.selectId(instanceId);
+    }
 }

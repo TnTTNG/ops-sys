@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/ecs/monitor")
+@RequestMapping("/monitor")
 public class EcsMonitorDataController {
 
     @Autowired
