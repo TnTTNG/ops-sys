@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ops.example.backend.aliyun.mapper.EcsMonitorDataMapper">
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO system_monitor (
+            instance_id, cpu_usage, cpu_credit_balance, cpu_credit_usage,
+            cpu_notpaid_surplus_credit_usage, cpu_advance_credit_balance,
+            bps_read, bps_write, iops_read, iops_write,
+            internet_bandwidth, intranet_bandwidth,
+            internet_rx, internet_tx, intranet_rx, intranet_tx,
+            monitor_time, created_at, updated_at
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.instanceId}, #{item.cpuUsage}, #{item.cpuCreditBalance},
+                #{item.cpuCreditUsage}, #{item.cpuNotpaidSurplusCreditUsage},
+                #{item.cpuAdvanceCreditBalance}, #{item.bpsRead}, #{item.bpsWrite},
+                #{item.iopsRead}, #{item.iopsWrite}, #{item.internetBandwidth},
+                #{item.intranetBandwidth}, #{item.internetRx}, #{item.internetTx},
+                #{item.intranetRx}, #{item.intranetTx}, #{item.monitorTime},
+                NOW(), NOW()
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectByInstanceIdAndTimeRange" resultType="ops.example.backend.aliyun.entity.EcsMonitorData">
+        SELECT * FROM system_monitor
+        WHERE instance_id = #{instanceId}
+        AND monitor_time BETWEEN #{startTime} AND #{endTime}
+        ORDER BY monitor_time DESC
+        <if test="pageSize != null and offset != null">
+            LIMIT #{offset}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="selectTotalByInstanceIdAndTimeRange" resultType="int">
+        SELECT COUNT(*) FROM system_monitor
+        WHERE instance_id = #{instanceId}
+        AND monitor_time BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+    <select id="selectLatestByInstanceId" resultType="ops.example.backend.aliyun.entity.EcsMonitorData">
+        SELECT * FROM system_monitor
+        WHERE instance_id = #{instanceId}
+        ORDER BY monitor_time DESC
+        LIMIT 1
+    </select>
+
+    <delete id="deleteBeforeTime">
+        DELETE FROM system_monitor
+        WHERE monitor_time &lt; #{beforeTime}
+    </delete>
+</mapper>

@@ -60,7 +60,7 @@
             </el-menu-item>
           </el-sub-menu>
 
-          <el-sub-menu>
+          <el-sub-menu index="2">
             <template #title>
               <svg-icon name="ecs" :size="20" />
               <span>资源管理</span>
@@ -77,15 +77,19 @@
 <!--              <el-icon><UserFilled /></el-icon>-->
               <span>负载均衡管理</span>
             </el-menu-item>
-<!--            <el-menu-item index="/manager/user">-->
-<!--              <el-icon><UserFilled /></el-icon>-->
-<!--              <span>管理员</span>-->
-<!--            </el-menu-item>-->
           </el-sub-menu>
-          <el-menu-item>
-            <svg-icon name="告警信息" :size="18" />
-            <span>监控告警</span>
-          </el-menu-item>
+
+          <el-sub-menu index="3">
+            <template #title>
+              <svg-icon name="告警信息" :size="18" />
+              <span>监控告警</span>
+            </template>
+            <el-menu-item index="/manager/monitor">
+<!--              <el-icon><UserFilled /></el-icon>-->
+              <span>监控管理</span>
+            </el-menu-item>
+          </el-sub-menu>
+
           <el-menu-item>
             <svg-icon name="日志管理" :size="20" />
             <span>日志管理</span>

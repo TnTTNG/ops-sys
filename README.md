@@ -289,3 +289,203 @@ npm run build
 2. 更新前做好备份
 3. 测试环境验证
 4. 灰度发布 
+
+## 设计思路
+
+### 1. 数据表设计
+
+#### 1.1 系统监控表(system_monitor)
+| 字段名 | 类型 | 描述 | 约束 |
+|--------|------|------|------|
+| id | Integer | 主键ID | PRIMARY KEY |
+| instance_id | varchar(50) | 实例ID | NOT NULL |
+| cpu_usage | decimal(5,2) | CPU使用率(%) | NOT NULL |
+| cpu_credit_balance | decimal(10,2) | 突发性能实例积分总数 | |
+| cpu_credit_usage | decimal(10,2) | 突发性能实例已使用的积分数 | |
+| cpu_notpaid_surplus_credit_usage | decimal(10,2) | 超额未支付积分 | |
+| cpu_advance_credit_balance | decimal(10,2) | 超额积分 | |
+| bps_read | bigint | 云盘读带宽(Byte/s) | |
+| bps_write | bigint | 云盘写带宽(Byte/s) | |
+| iops_read | bigint | 云盘读IOPS(次/s) | |
+| iops_write | bigint | 云盘写IOPS(次/s) | |
+| internet_bandwidth | bigint | 公网带宽(kbits/s) | |
+| intranet_bandwidth | bigint | 内网带宽(kbits/s) | |
+| internet_rx | bigint | 公网入流量(kbits) | |
+| internet_tx | bigint | 公网出流量(kbits) | |
+| intranet_rx | bigint | 内网入流量(kbits) | |
+| intranet_tx | bigint | 内网出流量(kbits) | |
+| monitor_time | datetime | 监控时间 | NOT NULL |
+| create_time | datetime | 创建时间 | NOT NULL |
+| update_time | datetime | 更新时间 | NOT NULL |
+
+#### 1.2 告警规则表(alert_rule)
+| 字段名 | 类型 | 描述 | 约束 |
+|--------|------|------|------|
+| id | Integer | 主键ID | PRIMARY KEY |
+| rule_name | varchar(100) | 规则名称 | NOT NULL |
+| metric_type | varchar(50) | 指标类型 | NOT NULL |
+| threshold | decimal(10,2) | 阈值 | NOT NULL |
+| operator | varchar(10) | 操作符 | NOT NULL |
+| status | varchar(10) | 状态 | DEFAULT '启用' |
+| create_time | datetime | 创建时间 | NOT NULL |
+| update_time | datetime | 更新时间 | NOT NULL |
+| create_by | Integer | 创建人 | NOT NULL |
+| update_by | Integer | 更新人 | NOT NULL |
+
+#### 1.3 告警记录表(alert_record)
+| 字段名 | 类型 | 描述 | 约束 |
+|--------|------|------|------|
+| id | Integer | 主键ID | PRIMARY KEY |
+| rule_id | Integer | 规则ID | NOT NULL |
+| server_id | varchar(50) | 服务器ID | NOT NULL |
+| alert_level | varchar(20) | 告警级别 | NOT NULL |
+| alert_content | text | 告警内容 | NOT NULL |
+| alert_time | datetime | 告警时间 | NOT NULL |
+| status | varchar(10) | 处理状态 | DEFAULT '未处理' |
+| handle_time | datetime | 处理时间 | |
+| handle_by | Integer | 处理人 | |
+| create_time | datetime | 创建时间 | NOT NULL |
+| update_time | datetime | 更新时间 | NOT NULL |
+
+### 2. 需要新增的文件
+
+#### 2.1 后端文件
+```
+backend/src/main/java/ops/example/backend/
+├── entity/
+│   ├── SystemMonitor.java
+│   ├── AlertRule.java
+│   └── AlertRecord.java
+├── mapper/
+│   ├── SystemMonitorMapper.java
+│   ├── AlertRuleMapper.java
+│   └── AlertRecordMapper.java
+├── service/
+│   ├── SystemMonitorService.java
+│   ├── AlertRuleService.java
+│   └── AlertRecordService.java
+├── controller/
+│   ├── SystemMonitorController.java
+│   ├── AlertRuleController.java
+│   └── AlertRecordController.java
+└── resources/
+    └── mapper/
+        ├── SystemMonitorMapper.xml
+        ├── AlertRuleMapper.xml
+        └── AlertRecordMapper.xml
+```
+
+#### 2.2 前端文件
+```
+frontend/src/
+├── views/
+│   ├── monitor/
+│   │   ├── SystemMonitor.vue
+│   │   ├── AlertRule.vue
+│   │   └── AlertRecord.vue
+│   └── components/
+│       ├── MonitorChart.vue
+│       └── AlertForm.vue
+└── router/
+    └── index.js (需要添加新路由)
+```
+
+### 3. 需要修改的文件
+
+#### 3.1 后端文件
+1. `backend/src/main/resources/application.yml`
+   - 添加监控相关配置
+   - 添加告警相关配置
+
+2. `backend/src/main/java/ops/example/backend/config/WebSocketConfig.java`
+   - 添加监控数据推送配置
+
+3. `backend/src/main/java/ops/example/backend/websocket/WebSocketServer.java`
+   - 添加监控数据推送方法
+
+#### 3.2 前端文件
+1. `frontend/src/router/index.js`
+   - 添加监控和告警相关路由
+
+2. `frontend/src/utils/websocket.js`
+   - 添加监控数据接收处理
+
+3. `frontend/src/views/Manager.vue`
+   - 添加监控和告警菜单项
+
+### 4. 主要功能实现
+
+#### 4.1 系统监控
+1. 定时采集服务器性能数据
+   - 使用阿里云SDK调用DescribeInstanceMonitorData接口
+   - 支持自定义时间范围和采集周期
+   - 处理接口限制（最多400条数据，30天内）
+   - 异常实例状态处理
+2. 数据可视化展示
+   - CPU使用率趋势图
+   - 网络流量分析图
+   - 磁盘IO性能图
+   - 突发性能实例积分监控
+3. 历史数据查询
+   - 支持多条件组合查询
+   - 分页展示
+   - 数据导出
+4. 数据导出功能
+   - 支持CSV格式导出
+   - 支持自定义时间范围
+   - 支持选择导出字段
+
+#### 4.2 告警管理
+1. 告警规则配置
+2. 告警触发处理
+3. 告警通知（邮件、短信）
+4. 告警记录查询
+
+#### 4.3 实时监控
+1. WebSocket实时推送
+2. 性能指标实时展示
+3. 告警实时通知
+
+### 5. 技术要点
+
+1. 使用WebSocket实现实时数据推送
+2. 使用ECharts实现数据可视化
+3. 使用定时任务采集监控数据
+   - 使用@Scheduled注解实现定时任务
+   - 使用线程池处理并发请求
+   - 实现失败重试机制
+4. 使用线程池处理告警通知
+5. 使用Redis缓存监控数据
+   - 缓存最近24小时数据
+   - 实现数据过期策略
+6. 阿里云SDK集成
+   - 处理接口调用限制
+   - 实现异常重试机制
+   - 优化请求频率
+
+### 6. 注意事项
+
+1. 监控数据采集频率控制
+   - 遵循阿里云接口限制
+   - 避免频繁调用
+   - 合理设置采集周期
+2. 数据库性能优化
+   - 建立合适的索引
+   - 实现数据归档策略
+   - 优化查询性能
+3. 告警规则合理性验证
+   - 考虑实例类型差异
+   - 设置合理的阈值
+   - 避免告警风暴
+4. 系统资源占用控制
+   - 控制并发请求数
+   - 优化内存使用
+   - 实现资源限流
+5. 数据安全性保护
+   - 加密敏感数据
+   - 实现访问控制
+   - 记录操作日志
+6. 阿里云接口限制处理
+   - 处理400条数据限制
+   - 处理30天时间限制
+   - 处理实例状态异常 

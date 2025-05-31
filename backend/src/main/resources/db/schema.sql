@@ -74,3 +74,31 @@ CREATE TABLE IF NOT EXISTS `slb_instance` (
   KEY `idx_slb_region` (`region_id`),
   KEY `idx_slb_name` (`load_balancer_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='SLB负载均衡实例信息表'; 
+
+-- 创建系统监控数据表
+CREATE TABLE IF NOT EXISTS `system_monitor` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `instance_id` varchar(64) NOT NULL COMMENT '实例ID',
+  `cpu_usage` decimal(5,2) NOT NULL COMMENT 'CPU使用率(%)',
+  `cpu_credit_balance` decimal(10,2) DEFAULT NULL COMMENT '突发性能实例积分总数',
+  `cpu_credit_usage` decimal(10,2) DEFAULT NULL COMMENT '突发性能实例已使用的积分数',
+  `cpu_notpaid_surplus_credit_usage` decimal(10,2) DEFAULT NULL COMMENT '超额未支付积分',
+  `cpu_advance_credit_balance` decimal(10,2) DEFAULT NULL COMMENT '超额积分',
+  `bps_read` bigint DEFAULT NULL COMMENT '云盘读带宽(Byte/s)',
+  `bps_write` bigint DEFAULT NULL COMMENT '云盘写带宽(Byte/s)',
+  `iops_read` bigint DEFAULT NULL COMMENT '云盘读IOPS(次/s)',
+  `iops_write` bigint DEFAULT NULL COMMENT '云盘写IOPS(次/s)',
+  `internet_bandwidth` bigint DEFAULT NULL COMMENT '公网带宽(kbits/s)',
+  `intranet_bandwidth` bigint DEFAULT NULL COMMENT '内网带宽(kbits/s)',
+  `internet_rx` bigint DEFAULT NULL COMMENT '公网入流量(kbits)',
+  `internet_tx` bigint DEFAULT NULL COMMENT '公网出流量(kbits)',
+  `intranet_rx` bigint DEFAULT NULL COMMENT '内网入流量(kbits)',
+  `intranet_tx` bigint DEFAULT NULL COMMENT '内网出流量(kbits)',
+  `monitor_time` datetime NOT NULL COMMENT '监控时间',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_instance_id` (`instance_id`),
+  KEY `idx_monitor_time` (`monitor_time`),
+  CONSTRAINT `fk_monitor_instance` FOREIGN KEY (`instance_id`) REFERENCES `ecs_instance` (`instance_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统监控数据表'; 

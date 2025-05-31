@@ -198,7 +198,7 @@ export default {
 
     // 打开DMS控制台
     const handleOpenDMS = (row) => {
-      const dmsUrl = `https://dms.aliyun.com/?regionId=${row.regionId}&dbType=mysql&instanceId=${row.dbInstanceId}&instanceSource=RDS`
+      const dmsUrl = `http://47.113.207.208/adminer?server=${row.connectionString}`
       window.open(dmsUrl, '_blank')
     }
 
