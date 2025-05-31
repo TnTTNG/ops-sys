@@ -26,4 +26,11 @@ public interface DescribeInstancesMapper {
 
     @Select("SELECT * FROM 'ecs_instance' WHERE instance_id = #{instanceId}")
     DescribeInstances selectId(String instanceId);
+
+    /**
+     * 获取第一个实例ID
+     * @return 实例ID
+     */
+    @Select("SELECT instance_id FROM describe_instances LIMIT 1")
+    String selectFirstInstanceId();
 }

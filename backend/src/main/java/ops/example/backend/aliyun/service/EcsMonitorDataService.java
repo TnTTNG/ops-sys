@@ -39,14 +39,18 @@ public class EcsMonitorDataService {
      * @return 监控数据列表
      */
     @Transactional(rollbackFor = Exception.class)
-    public List<EcsMonitorData> getInstanceMonitorData(String instanceId, LocalDateTime startTime, LocalDateTime endTime) {
+    public List<EcsMonitorData> getInstanceMonitorData(String instanceId, LocalDateTime startTime, LocalDateTime endTime, Integer period) {
         if (instanceId == null || instanceId.trim().isEmpty()) {
             throw new IllegalArgumentException("实例ID不能为空");
         }
         
-        // 验证实例ID格式
         if (!instanceId.matches("^i-[a-z0-9]+$")) {
             throw new IllegalArgumentException("实例ID格式不正确，应以 i- 开头");
+        }
+
+        // 验证并调整period参数
+        if (period == null || period < 60 || period > 86400 || period % 60 != 0) {
+            period = 60; // 默认使用60秒
         }
         
         try {
@@ -64,7 +68,8 @@ public class EcsMonitorDataService {
             DescribeInstanceMonitorDataRequest request = new DescribeInstanceMonitorDataRequest()
                     .setInstanceId(instanceId)
                     .setStartTime(startTimeStr)
-                    .setEndTime(endTimeStr);
+                    .setEndTime(endTimeStr)
+                    .setPeriod(period);
 
             RuntimeOptions runtime = new RuntimeOptions();
             DescribeInstanceMonitorDataResponse response = client.describeInstanceMonitorDataWithOptions(request, runtime);

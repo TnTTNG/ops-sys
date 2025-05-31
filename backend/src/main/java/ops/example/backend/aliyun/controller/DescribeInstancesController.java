@@ -56,4 +56,19 @@ public class DescribeInstancesController {
             return Result.error("同步失败：" + e.getMessage());
         }
     }
+
+    /**
+     * 获取单个实例ID
+     * @return 实例ID
+     */
+    @GetMapping("/getInstanceId")
+    public Result getInstanceId() {
+        try {
+            String instanceId = describeInstancesService.selectFirstInstanceId();
+            return Result.success(instanceId);
+        } catch (Exception e) {
+            return Result.error("获取实例ID失败：" + e.getMessage());
+        }
+    }
+    
 }

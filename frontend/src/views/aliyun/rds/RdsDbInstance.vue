@@ -26,8 +26,8 @@
           style="width: 100%"
           border
         >
-          <el-table-column prop="dbInstanceId" label="实例ID" width="180" />
-          <el-table-column prop="dbInstanceDescription" label="实例描述" width="120" />
+          <el-table-column prop="dbInstanceId" label="实例ID" width="190" />
+<!--          <el-table-column prop="dbInstanceDescription" label="实例描述" width="120" />-->
           <el-table-column prop="dbInstanceStatus" label="状态" width="100">
             <template #default="scope">
               <el-tag :type="getStatusType(scope.row.dbInstanceStatus)">
@@ -37,15 +37,15 @@
           </el-table-column>
           <el-table-column prop="engine" label="数据库类型" width="100" />
           <el-table-column prop="engineVersion" label="数据库版本" width="100" />
-          <el-table-column prop="zoneId" label="可用区" width="100" />
-          <el-table-column prop="dbInstanceClass" label="实例规格" width="120" />
+          <el-table-column prop="zoneId" label="可用区" width="110" />
+<!--          <el-table-column prop="dbInstanceClass" label="实例规格" width="170" />-->
           <el-table-column prop="createTime" label="创建时间" width="180">
             <template #default="scope">
               {{ formatCreateTime(scope.row.createTime) }}
             </template>
           </el-table-column>
-          <el-table-column prop="vSwitchId" label="交换机ID" width="180" />
-          <el-table-column prop="tipsLevel" label="提示级别" width="100" />
+<!--          <el-table-column prop="vSwitchId" label="交换机ID" width="180" />-->
+<!--          <el-table-column prop="tipsLevel" label="提示级别" width="100" />-->
           <el-table-column prop="deletionProtection" label="删除保护" width="100">
             <template #default="scope">
               <el-tag :type="scope.row.deletionProtection ? 'success' : 'info'">
@@ -53,28 +53,28 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="lockMode" label="锁定模式" width="100" />
-          <el-table-column prop="payType" label="付费类型" width="100" />
-          <el-table-column prop="dbInstanceStorageType" label="存储类型" width="120" />
-          <el-table-column prop="vpcId" label="专有网络ID" width="180" />
+<!--          <el-table-column prop="lockMode" label="锁定模式" width="100" />-->
+<!--          <el-table-column prop="payType" label="付费类型" width="100" />-->
+<!--          <el-table-column prop="dbInstanceStorageType" label="存储类型" width="120" />-->
+<!--          <el-table-column prop="vpcId" label="专有网络ID" width="200" />-->
           <el-table-column prop="connectionMode" label="连接模式" width="100" />
-          <el-table-column prop="connectionString" label="连接地址" width="180" />
-          <el-table-column prop="expireTime" label="过期时间" width="180">
-            <template #default="scope">
-              {{ formatCreateTime(scope.row.expireTime) }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="dbInstanceMemory" label="内存(MB)" width="100" />
+          <el-table-column prop="connectionString" label="连接地址" width="343" />
+<!--          <el-table-column prop="expireTime" label="过期时间" width="180">-->
+<!--            <template #default="scope">-->
+<!--              {{ formatCreateTime(scope.row.expireTime) }}-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column prop="dbInstanceMemory" label="内存(MB)" width="100" />-->
           <el-table-column prop="resourceGroupId" label="资源组ID" width="180" />
           <el-table-column prop="dbInstanceNetType" label="网络类型" width="100" />
           <el-table-column prop="dbInstanceType" label="实例类型" width="100" />
-          <el-table-column prop="mutriORsignle" label="多可用区" width="100">
-            <template #default="scope">
-              <el-tag :type="scope.row.mutriORsignle ? 'success' : 'info'">
-                {{ scope.row.mutriORsignle ? '是' : '否' }}
-              </el-tag>
-            </template>
-          </el-table-column>
+<!--          <el-table-column prop="mutriORsignle" label="多可用区" width="100">-->
+<!--            <template #default="scope">-->
+<!--              <el-tag :type="scope.row.mutriORsignle ? 'success' : 'info'">-->
+<!--                {{ scope.row.mutriORsignle ? '是' : '否' }}-->
+<!--              </el-tag>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
           <el-table-column prop="instanceNetworkType" label="实例网络类型" width="120" />
           <el-table-column label="操作" width="120" fixed="right">
             <template #default="scope">
@@ -198,7 +198,8 @@ export default {
 
     // 打开DMS控制台
     const handleOpenDMS = (row) => {
-      const dmsUrl = `http://47.113.207.208/adminer?server=${row.connectionString}`
+      // const dmsUrl = `http://47.113.207.208:8090/adminer.php?server=${row.connectionString}`
+      const dmsUrl = `http://47.113.207.208:8090/adminer.php?server=${row.connectionString}.mysql.rds.aliyuncs.com&username=admin01`
       window.open(dmsUrl, '_blank')
     }
 

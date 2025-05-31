@@ -1,8 +1,14 @@
 <template>
   <div class="ecs-monitor">
     <div class="monitor-header">
-      <input type="text" v-model="selectedInstanceId" placeholder="请输入实例 ID" />
+      <input v-model="selectedInstanceId" placeholder="请输入实例 ID" />
+      <el-select v-model="timeInterval" placeholder="请选择时间间隔" style="width: 100px">
+        <el-option label="1小时" value="1h" />
+        <el-option label="12小时" value="12h" />
+        <el-option label="24小时" value="24h" />
+      </el-select>
       <el-button type="primary" @click="fetchMonitorData">查询</el-button>
+      <el-button type="danger" @click="clearData">清除数据</el-button>
     </div>
 
     <div class="monitor-charts">
@@ -31,6 +37,8 @@ let cpuChartInstance = null
 let networkChartInstance = null
 let diskChartInstance = null
 let trafficChartInstance = null
+const timeInterval = ref('1h')
+const tableData = ref([])
 
 // 初始化图表
 const initCharts = () => {
@@ -218,6 +226,29 @@ const handleInstanceChange = (instanceId) => {
   }
 }
 
+const getEcsInstancesId = async () => {
+  try {
+    loading.value = true
+    const res = await request.get('/ecs/selectAll', {
+      params: {
+        pageNum: 1,
+        pageSize: 100
+      }
+    })
+    if (res.code === '200' && res.data) {
+      tableData.value = res.data.list || []
+      console.log('获取到的数据：', tableData.value) // 添加日志
+    } else {
+      ElMessage.error(res.msg || '获取数据失败')
+    }
+  } catch (error) {
+    console.error('获取数据失败：', error) // 添加错误日志
+    ElMessage.error('获取数据失败：' + (error.response?.data?.msg || error.message))
+  } finally {
+    loading.value = false
+  }
+}
+
 // 获取监控数据
 const fetchMonitorData = async () => {
   if (!selectedInstanceId.value) {
@@ -226,19 +257,42 @@ const fetchMonitorData = async () => {
   }
 
   try {
+    let period = '60'
     const endTime = new Date()
-    const startTime = new Date(endTime.getTime() - 3600000) // 默认查询最近一小时的数据
+    let startTime = new Date() // 默认查询最近一小时的数据
 
+    switch (timeInterval.value) {
+      case '1h':
+        startTime = new Date(endTime.getTime() - 3600000)
+        period = '60'
+        break
+      case '12h':
+        startTime = new Date(endTime.getTime() - 12 * 3600000)
+        period = '600'
+        break
+      case '24h':
+        startTime = new Date(endTime.getTime() - 24 * 3600000)
+        period = '600'
+        break
+      default:
+        period = '60'
+    }
     // 格式化时间为 ISO 8601 格式，并移除毫秒
     const formatTime = (date) => {
       return date.toISOString().replace(/\.\d{3}Z$/, 'Z')
     }
-
+    // 发送删除请求
+    await request.delete('/monitor/clean', {
+      params: {
+        beforeTime: formatTime(endTime)
+      }
+    })
     const response = await request.get('/monitor/data', {
       params: {
         instanceId: selectedInstanceId.value,
         startTime: formatTime(startTime),
-        endTime: formatTime(endTime)
+        endTime: formatTime(endTime),
+        period: period
       }
     })
 
@@ -282,7 +336,17 @@ const fetchMonitorData = async () => {
     ElMessage.error(error.response?.data?.message || '获取监控数据失败')
   }
 }
-
+const clearData = () => {
+  const endTime = new Date()
+  const formatTime = (date) => {
+    return date.toISOString().replace(/\.\d{3}Z$/, 'Z')
+  }
+  request.delete('/monitor/clean', {
+    params: {
+      beforeTime: formatTime(endTime)
+    }
+  })
+}
 // 更新图表数据
 const updateCharts = (data) => {
   if (!Array.isArray(data) || data.length === 0) {
@@ -372,8 +436,19 @@ const handleResize = () => {
   trafficChartInstance?.resize()
 }
 
+// 在组件挂载时初始化
 onMounted(() => {
-  initCharts()
+  // 从localStorage获取实例ID
+  const storedInstanceId = localStorage.getItem('monitorInstanceId')
+  if (storedInstanceId) {
+    selectedInstanceId.value = storedInstanceId
+    // 初始化图表
+    initCharts()
+    // 自动获取监控数据
+    fetchMonitorData()
+    // 清除存储的实例ID
+    localStorage.removeItem('monitorInstanceId')
+  }
   window.addEventListener('resize', handleResize)
   fetchInstanceList() // 获取实例列表
 })

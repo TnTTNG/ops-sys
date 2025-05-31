@@ -37,9 +37,10 @@ public class EcsMonitorDataController {
     public Result getMonitorData(
             @RequestParam String instanceId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
+            @RequestParam Integer period) {
         try {
-            List<EcsMonitorData> data = ecsMonitorDataService.getInstanceMonitorData(instanceId, startTime, endTime);
+            List<EcsMonitorData> data = ecsMonitorDataService.getInstanceMonitorData(instanceId, startTime, endTime, period);
             Map<String, Object> result = new HashMap<>();
             result.put("list", data);
             result.put("total", data.size());

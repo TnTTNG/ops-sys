@@ -112,6 +112,8 @@ public class EcsMonitorData {
      */
     private LocalDateTime updatedAt;
 
+    private Integer period;
+
     /**
      * 关联的ECS实例信息
      */

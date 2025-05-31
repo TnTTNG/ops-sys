@@ -37,6 +37,14 @@ public class DescribeInstancesService {
     }
 
     /**
+     * 获取第一个实例ID
+     * @return 实例ID
+     */
+    public String selectFirstInstanceId() {
+        return describeInstancesMapper.selectFirstInstanceId();
+    }
+
+    /**
      * 同步阿里云ECS实例数据到数据库
      * @return 数据库中的实例总数
      */

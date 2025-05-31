@@ -26,27 +26,27 @@
           style="width: 100%"
           border
         >
-          <el-table-column prop="instanceId" label="实例ID" width="220" />
-          <el-table-column prop="instanceName" label="实例名称" width="180" />
-          <el-table-column prop="hostName" label="主机名" width="180" />
-          <el-table-column prop="status" label="状态" width="100">
+          <el-table-column prop="instanceId" label="实例ID" width="184" />
+<!--          <el-table-column prop="instanceName" label="实例名称" width="180" />-->
+          <el-table-column prop="hostName" label="主机名" width="200" />
+          <el-table-column prop="status" label="状态" width="95">
             <template #default="scope">
               <el-tag :type="getStatusType(scope.row.status)">
                 {{ scope.row.status }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="instanceType" label="实例规格" width="120" />
-          <el-table-column prop="cpu" label="CPU" width="80" />
+<!--          <el-table-column prop="instanceType" label="实例规格" width="120" />-->
+          <el-table-column prop="cpu" label="CPU核心数" width="100" />
           <el-table-column prop="memory" label="内存(MB)" width="100" />
-          <el-table-column prop="osName" label="操作系统" width="180" />
-          <el-table-column prop="publicIpAddress" label="公网IP" width="120" />
-          <el-table-column prop="privateIpAddress" label="私网IP" width="120" />
+          <el-table-column prop="osName" label="操作系统" width="146" />
+          <el-table-column prop="publicIpAddress" label="公网IP" width="130" />
+          <el-table-column prop="privateIpAddress" label="私网IP" width="130" />
           <el-table-column prop="regionId" label="地域" width="100" />
           <el-table-column prop="zoneId" label="可用区" width="120" />
           <el-table-column prop="creationTime" label="创建时间" width="180" />
-          <el-table-column prop="startTime" label="启动时间" width="180" />
-          <el-table-column prop="expiredTime" label="过期时间" width="180" />
+<!--          <el-table-column prop="startTime" label="启动时间" width="180" />-->
+<!--          <el-table-column prop="expiredTime" label="过期时间" width="180" />-->
           <el-table-column label="操作" width="160" fixed="right">
             <template #default="scope">
               <el-button
@@ -65,6 +65,13 @@
                 @click="handleCloseTerminal"
               >
                 断开连接
+              </el-button>
+              <el-button
+                type="primary"
+                link
+                @click="handleMonitor(scope.row)"
+              >
+                监控
               </el-button>
             </template>
           </el-table-column>
@@ -98,6 +105,7 @@ import request from '@/utils/request'
 import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import '@xterm/xterm/css/xterm.css'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'DescribeInstances',
@@ -105,6 +113,7 @@ export default {
     Refresh
   },
   setup() {
+    const router = useRouter()
     const loading = ref(false)
     const tableData = ref([])
     const isAutoSync = ref(false)
@@ -627,6 +636,14 @@ export default {
       currentCommand.value = ''
     }
 
+    // 处理监控按钮点击
+    const handleMonitor = (instance) => {
+      // 将实例ID存储到localStorage
+      localStorage.setItem('monitorInstanceId', instance.instanceId)
+      // 跳转到监控页面
+      router.push('/manager/monitor')
+    }
+
     onMounted(() => {
       getEcsInstances()
     })
@@ -653,7 +670,8 @@ export default {
       handleCloseTerminal,
       connectingInstance,
       handleBeforeCloseTerminal,
-      handleCloseCompleted
+      handleCloseCompleted,
+      handleMonitor
     }
   }
 }
