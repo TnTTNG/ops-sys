@@ -42,4 +42,13 @@ public class ClientUtils {
         config.endpoint = "slb.cn-heyuan.aliyuncs.com";
         return new com.aliyun.slb20140515.Client(config);
     }
+
+    public static com.aliyun.swas_open20200601.Client createSWASClient() throws Exception {
+        Config config = new Config()
+                .setAccessKeyId(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID"))
+                .setAccessKeySecret(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET"))
+                .setEndpoint("swas.aliyuncs.com");
+        return new com.aliyun.swas_open20200601.Client(config);
+    }
+
 }

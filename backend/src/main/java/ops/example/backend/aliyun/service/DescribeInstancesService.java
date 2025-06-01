@@ -25,13 +25,14 @@ public class DescribeInstancesService {
     @Resource
     DescribeInstancesMapper describeInstancesMapper;
 
+    @Transactional(rollbackFor = Exception.class)
     public List<DescribeInstances> selectAll(Integer pageNum, Integer pageSize, String instanceId, String status) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
         Integer offset = (pageNum - 1) * pageSize;
         return describeInstancesMapper.selectAll(instanceId, status, pageSize, offset);
     }
-
+    @Transactional(rollbackFor = Exception.class)
     public int selectTotal(String instanceId, String status) {
         return describeInstancesMapper.selectTotal(instanceId, status);
     }
@@ -40,6 +41,7 @@ public class DescribeInstancesService {
      * 获取第一个实例ID
      * @return 实例ID
      */
+    @Transactional(rollbackFor = Exception.class)
     public String selectFirstInstanceId() {
         return describeInstancesMapper.selectFirstInstanceId();
     }
@@ -52,9 +54,11 @@ public class DescribeInstancesService {
     public int syncEcsInstances() throws Exception {
         // 创建ECS客户端
         com.aliyun.ecs20140526.Client client = ClientUtils.createEcsClient();
+        com.aliyun.swas_open20200601.Client swasClient = ClientUtils.createSWASClient();
         // 构建请求
         com.aliyun.ecs20140526.models.DescribeInstancesRequest request = new com.aliyun.ecs20140526.models.DescribeInstancesRequest()
                 .setRegionId("cn-heyuan");
+
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
         
         // 调用API获取数据

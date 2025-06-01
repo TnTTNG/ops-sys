@@ -3,7 +3,7 @@
     <div class="describe-instances-header">
       <div class="describe-instances-header-title">
         <div class="describe-instances-header-title-text">
-          阿里云ECS实例管理
+          阿里云实例管理
         </div>
       </div>
       <div class="describe-instances-header-actions">
@@ -27,8 +27,8 @@
           border
         >
           <el-table-column prop="instanceId" label="实例ID" width="184" />
-<!--          <el-table-column prop="instanceName" label="实例名称" width="180" />-->
-          <el-table-column prop="hostName" label="主机名" width="200" />
+          <el-table-column prop="instanceName" label="实例名称" width="180" />
+<!--          <el-table-column prop="hostName" label="主机名" width="200" />-->
           <el-table-column prop="status" label="状态" width="95">
             <template #default="scope">
               <el-tag :type="getStatusType(scope.row.status)">
@@ -36,7 +36,7 @@
               </el-tag>
             </template>
           </el-table-column>
-<!--          <el-table-column prop="instanceType" label="实例规格" width="120" />-->
+          <el-table-column prop="instanceType" label="实例规格" width="120" />
           <el-table-column prop="cpu" label="CPU核心数" width="100" />
           <el-table-column prop="memory" label="内存(MB)" width="100" />
           <el-table-column prop="osName" label="操作系统" width="146" />
@@ -45,8 +45,13 @@
           <el-table-column prop="regionId" label="地域" width="100" />
           <el-table-column prop="zoneId" label="可用区" width="120" />
           <el-table-column prop="creationTime" label="创建时间" width="180" />
-<!--          <el-table-column prop="startTime" label="启动时间" width="180" />-->
-<!--          <el-table-column prop="expiredTime" label="过期时间" width="180" />-->
+          <el-table-column prop="instanceSource" label="实例来源" width="100">
+            <template #default="scope">
+              <el-tag :type="scope.row.instanceSource === 'ECS' ? 'primary' : 'success'">
+                {{ scope.row.instanceSource }}
+              </el-tag>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="160" fixed="right">
             <template #default="scope">
               <el-button
@@ -510,44 +515,71 @@ export default {
       }
     }
 
-    // 获取ECS实例列表
-    const getEcsInstances = async () => {
+    // 获取实例列表
+    const getInstances = async () => {
       try {
         loading.value = true
-        const res = await request.get('/ecs/selectAll', {
-          params: {
-            pageNum: 1,
-            pageSize: 100
-          }
+        // 并行请求ECS和SWAS实例数据
+        const [ecsRes, swasRes] = await Promise.all([
+          request.get('/ecs/selectAll', {
+            params: {
+              pageNum: 1,
+              pageSize: 100
+            }
+          }),
+          request.get('/swas/selectAll', {
+            params: {
+              pageNum: 1,
+              pageSize: 100
+            }
+          })
+        ])
+
+        // 处理ECS实例数据
+        const ecsInstances = ecsRes.code === '200' ? (ecsRes.data.list || []).map(instance => ({
+          ...instance,
+          instanceSource: 'ECS'
+        })) : []
+
+        // 处理SWAS实例数据
+        const swasInstances = swasRes.code === '200' ? (swasRes.data.list || []).map(instance => ({
+          ...instance,
+          instanceSource: 'SWAS'
+        })) : []
+
+        // 合并数据并按创建时间排序
+        tableData.value = [...ecsInstances, ...swasInstances].sort((a, b) => {
+          return new Date(b.creationTime) - new Date(a.creationTime)
         })
-        if (res.code === '200' && res.data) {
-          tableData.value = res.data.list || []
-          console.log('获取到的数据：', tableData.value) // 添加日志
-        } else {
-          ElMessage.error(res.msg || '获取数据失败')
-        }
+
+        console.log('获取到的数据：', tableData.value)
       } catch (error) {
-        console.error('获取数据失败：', error) // 添加错误日志
+        console.error('获取数据失败：', error)
         ElMessage.error('获取数据失败：' + (error.response?.data?.msg || error.message))
       } finally {
         loading.value = false
       }
     }
 
-    // 同步ECS数据
+    // 同步实例数据
     const handleSync = async () => {
       try {
         loading.value = true
-        const res = await request.get('/ecs/sync')
-        if (res.code === '200') {
-          ElMessage.success(res.data)
+        // 并行同步ECS和SWAS数据
+        const [ecsRes, swasRes] = await Promise.all([
+          request.get('/ecs/sync'),
+          request.get('/swas/sync')
+        ])
+
+        if (ecsRes.code === '200' && swasRes.code === '200') {
+          ElMessage.success('数据同步成功')
           // 同步成功后刷新列表
-          await getEcsInstances()
+          await getInstances()
         } else {
-          ElMessage.error(res.msg || '同步失败')
+          ElMessage.error('同步失败：' + (ecsRes.msg || swasRes.msg))
         }
       } catch (error) {
-        console.error('同步失败：', error) // 添加错误日志
+        console.error('同步失败：', error)
         ElMessage.error('同步失败：' + (error.response?.data?.msg || error.message))
       } finally {
         loading.value = false
@@ -581,7 +613,9 @@ export default {
         'Creating': 'warning',
         'Deleting': 'danger',
         'Rebooting': 'warning',
-        'Expired': 'danger'
+        'Expired': 'danger',
+        'Normal': 'success',  // SWAS状态
+        'Abnormal': 'danger'  // SWAS状态
       }
       return statusMap[status] || 'info'
     }
@@ -645,7 +679,7 @@ export default {
     }
 
     onMounted(() => {
-      getEcsInstances()
+      getInstances()
     })
 
     onUnmounted(() => {

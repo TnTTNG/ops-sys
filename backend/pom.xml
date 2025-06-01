@@ -167,6 +167,19 @@
             <artifactId>jsch</artifactId>
             <version>0.1.55</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>swas_open20200601</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <!-- Maven 示例 -->
+        <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-core</artifactId>
+            <version>6.55.0</version>
+        </dependency>
     </dependencies>
 
     <build>

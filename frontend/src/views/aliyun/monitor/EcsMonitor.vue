@@ -206,6 +206,9 @@ const initCharts = () => {
       }
     ]
   })
+
+  // After initializing charts, fetch the monitor data
+  fetchMonitorData()
 }
 
 // 获取实例列表
@@ -254,6 +257,11 @@ const fetchMonitorData = async () => {
   if (!selectedInstanceId.value) {
     ElMessage.warning('请输入实例ID')
     return
+  }
+
+  // 确保图表实例已初始化
+  if (!cpuChartInstance || !networkChartInstance || !diskChartInstance || !trafficChartInstance) {
+    initCharts()
   }
 
   try {
@@ -355,6 +363,17 @@ const updateCharts = (data) => {
     return
   }
 
+  // 检查图表实例是否都已初始化
+  if (!cpuChartInstance || !networkChartInstance || !diskChartInstance || !trafficChartInstance) {
+    console.warn('图表实例未初始化，正在重新初始化...')
+    initCharts()
+    // 如果初始化后仍然失败，则返回
+    if (!cpuChartInstance || !networkChartInstance || !diskChartInstance || !trafficChartInstance) {
+      ElMessage.error('图表初始化失败，请刷新页面重试')
+      return
+    }
+  }
+
   try {
     console.log('处理监控数据:', data)
 
@@ -365,6 +384,13 @@ const updateCharts = (data) => {
       ElMessage.warning('数据格式不正确')
       return
     }
+
+    // 添加CPU数据调试日志
+    console.log('CPU使用率数据:', validData.map(item => ({
+      time: item.monitorTime,
+      cpuUsage: item.cpuUsage,
+      rawData: item
+    })))
 
     const cpuData = validData.map(item => [new Date(item.monitorTime), item.cpuUsage])
     const networkData = {
@@ -442,13 +468,11 @@ onMounted(() => {
   const storedInstanceId = localStorage.getItem('monitorInstanceId')
   if (storedInstanceId) {
     selectedInstanceId.value = storedInstanceId
-    // 初始化图表
-    initCharts()
-    // 自动获取监控数据
-    fetchMonitorData()
-    // 清除存储的实例ID
-    localStorage.removeItem('monitorInstanceId')
   }
+  // 初始化图表
+  initCharts()
+  // 清除存储的实例ID
+  localStorage.removeItem('monitorInstanceId')
   window.addEventListener('resize', handleResize)
   fetchInstanceList() // 获取实例列表
 })
