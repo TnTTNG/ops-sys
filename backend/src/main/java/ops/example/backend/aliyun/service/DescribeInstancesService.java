@@ -213,4 +213,56 @@ public class DescribeInstancesService {
     public DescribeInstances selectId(String instanceId) {
         return describeInstancesMapper.selectId(instanceId);
     }
+
+    /**
+     * 重启ECS实例
+     * @param instanceId ECS实例ID
+     * @return 是否重启成功
+     */
+    public boolean rebootInstance(String instanceId) {
+        log.info("开始重启ECS实例: {}", instanceId);
+        
+        // 先尝试使用第一个AK重启
+        try {
+            boolean success = rebootInstanceWithClient(ClientUtils.createEcsClient(), instanceId, "cn-heyuan");
+            if (success) {
+                log.info("使用第一个AK成功重启ECS实例: {}", instanceId);
+                return true;
+            }
+        } catch (Exception e) {
+            log.warn("使用第一个AK重启ECS实例失败: {}", e.getMessage());
+        }
+
+        // 如果第一个AK失败，尝试使用第二个AK
+        try {
+            boolean success = rebootInstanceWithClient(ClientUtils.createEcsClient1(), instanceId, "cn-shenzhen");
+            if (success) {
+                log.info("使用第二个AK成功重启ECS实例: {}", instanceId);
+                return true;
+            }
+        } catch (Exception e) {
+            log.warn("使用第二个AK重启ECS实例失败: {}", e.getMessage());
+        }
+
+        log.error("ECS实例重启失败: {}", instanceId);
+        return false;
+    }
+
+    /**
+     * 使用指定的客户端重启ECS实例
+     */
+    private boolean rebootInstanceWithClient(com.aliyun.ecs20140526.Client client, String instanceId, String regionId) throws Exception {
+        com.aliyun.ecs20140526.models.RebootInstanceRequest request = new com.aliyun.ecs20140526.models.RebootInstanceRequest()
+                .setInstanceId(instanceId)
+                .setForceStop(false); // 正常重启，不强制停止
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        
+        try {
+            com.aliyun.ecs20140526.models.RebootInstanceResponse response = client.rebootInstanceWithOptions(request, runtime);
+            return response != null && response.getBody() != null;
+        } catch (Exception e) {
+            log.error("重启ECS实例失败: {}, 区域: {}", instanceId, regionId, e);
+            throw e;
+        }
+    }
 }

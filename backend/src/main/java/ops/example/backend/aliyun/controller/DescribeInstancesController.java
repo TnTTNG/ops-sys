@@ -5,6 +5,8 @@ import ops.example.backend.aliyun.entity.DescribeInstances;
 import ops.example.backend.aliyun.service.DescribeInstancesService;
 import ops.example.backend.common.Result;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,4 +73,33 @@ public class DescribeInstancesController {
         }
     }
     
+    /**
+     * 重启ECS实例
+     * @param instance 包含实例ID的实例对象
+     * @return 重启结果
+     */
+    @PostMapping("/restart")
+    public Result restartInstance(@RequestBody DescribeInstances instance) {
+        try {
+            if (instance == null || instance.getInstanceId() == null || instance.getInstanceId().trim().isEmpty()) {
+                return Result.error("实例ID不能为空");
+            }
+
+            boolean success = describeInstancesService.rebootInstance(instance.getInstanceId());
+            if (success) {
+                return Result.success("重启指令已发送，请等待实例重启完成");
+            } else {
+                return Result.error("重启失败，请检查实例状态或权限");
+            }
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("404")) {
+                return Result.error("实例不存在或不在当前区域");
+            } else if (errorMessage.contains("403")) {
+                return Result.error("当前实例状态不支持重启操作");
+            } else {
+                return Result.error("重启失败：" + errorMessage);
+            }
+        }
+    }
 }

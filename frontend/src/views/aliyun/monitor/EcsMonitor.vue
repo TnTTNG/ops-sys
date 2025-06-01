@@ -294,11 +294,11 @@ const fetchMonitorData = async () => {
     const countResponse = await request.get('/monitor/count')
     if (countResponse.code === '200' && countResponse.data >= 1000) {
       // 如果记录数超过1000，调用清理接口
-      await request.delete('/monitor/clean', {
-        params: {
+    await request.delete('/monitor/clean', {
+      params: {
           beforeTime: formatTime(new Date(endTime.getTime() - 24 * 3600000)) // 清理24小时前的数据
-        }
-      })
+      }
+    })
       ElMessage.success('已自动清理历史监控数据')
     }
 
@@ -476,10 +476,10 @@ onMounted(() => {
   if (storedInstanceId) {
     selectedInstanceId.value = storedInstanceId
   }
-  // 初始化图表
-  initCharts()
-  // 清除存储的实例ID
-  localStorage.removeItem('monitorInstanceId')
+    // 初始化图表
+    initCharts()
+    // 清除存储的实例ID
+    localStorage.removeItem('monitorInstanceId')
   window.addEventListener('resize', handleResize)
   fetchInstanceList() // 获取实例列表
 })
