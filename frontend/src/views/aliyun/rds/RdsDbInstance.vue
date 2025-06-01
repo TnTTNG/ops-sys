@@ -37,7 +37,7 @@
           </el-table-column>
           <el-table-column prop="engine" label="数据库类型" width="100" />
           <el-table-column prop="engineVersion" label="数据库版本" width="100" />
-          <el-table-column prop="zoneId" label="可用区" width="110" />
+          <el-table-column prop="zoneId" label="可用区" width="123" />
 <!--          <el-table-column prop="dbInstanceClass" label="实例规格" width="170" />-->
           <el-table-column prop="createTime" label="创建时间" width="180">
             <template #default="scope">
@@ -76,7 +76,7 @@
 <!--            </template>-->
 <!--          </el-table-column>-->
           <el-table-column prop="instanceNetworkType" label="实例网络类型" width="120" />
-          <el-table-column label="操作" width="120" fixed="right">
+          <el-table-column label="操作" width="200" fixed="right">
             <template #default="scope">
               <el-button
                 type="primary"
@@ -84,6 +84,14 @@
                 @click="handleOpenDMS(scope.row)"
               >
                 管理数据库
+              </el-button>
+              <el-button
+                  type="warning"
+                  link
+                  :loading="scope.row.restarting"
+                  @click="handleRestart(scope.row)"
+              >
+                重启实例
               </el-button>
             </template>
           </el-table-column>
@@ -95,7 +103,7 @@
 
 <script>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 // import axios from "axios";
@@ -203,6 +211,59 @@ export default {
       window.open(dmsUrl, '_blank')
     }
 
+    // 重启RDS实例
+    const handleRestart = async (row) => {
+      try {
+        // 添加确认对话框
+        await ElMessageBox.confirm(
+            `确定要重启实例 ${row.dbInstanceId} 吗？`,
+            '重启确认',
+            {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }
+        )
+
+        // 设置当前行的重启状态
+        row.restarting = true
+
+        const res = await request.post('/rds/restart', {
+          dbInstanceId: row.dbInstanceId
+        })
+
+        if (res.code === '200') {
+          ElMessage.success(res.data)
+          // 等待3秒后同步数据，给实例重启留出时间
+          setTimeout(async () => {
+            try {
+              const syncRes = await request.get('/rds/sync')
+              if (syncRes.code === '200') {
+                ElMessage.success(syncRes.data)
+                // 同步成功后刷新列表
+                await getRdsInstances()
+              } else {
+                ElMessage.error(syncRes.msg || '同步失败')
+              }
+            } catch (error) {
+              console.error('同步失败，详细错误：', error)
+              ElMessage.error(error.response?.data?.msg || error.message || '同步失败')
+            }
+          }, 3000)
+        } else {
+          ElMessage.error(res.msg || '重启失败')
+        }
+      } catch (error) {
+        if (error !== 'cancel') {
+          console.error('重启失败，详细错误：', error)
+          ElMessage.error(error.response?.data?.msg || error.message || '重启失败')
+        }
+      } finally {
+        // 清除重启状态
+        row.restarting = false
+      }
+    }
+
     onMounted(() => {
       getRdsInstances()
     })
@@ -223,7 +284,8 @@ export default {
       handleAutoSyncChange,
       getStatusType,
       formatCreateTime,
-      handleOpenDMS
+      handleOpenDMS,
+      handleRestart
     }
   }
 }
