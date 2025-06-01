@@ -65,4 +65,10 @@ public interface EcsMonitorDataMapper {
      * @return 删除记录数
      */
     int deleteBeforeTime(@Param("beforeTime") LocalDateTime beforeTime);
+
+    /**
+     * 获取监控数据总记录数
+     * @return 记录总数
+     */
+    int selectTotalCount();
 }

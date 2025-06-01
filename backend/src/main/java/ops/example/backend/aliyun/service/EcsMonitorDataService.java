@@ -184,4 +184,12 @@ public class EcsMonitorDataService {
     public void cleanHistoryData(LocalDateTime beforeTime) {
         ecsMonitorDataMapper.deleteBeforeTime(beforeTime);
     }
+
+    /**
+     * 获取监控数据总记录数
+     * @return 记录总数
+     */
+    public int getTotalCount() {
+        return ecsMonitorDataMapper.selectTotalCount();
+    }
 }

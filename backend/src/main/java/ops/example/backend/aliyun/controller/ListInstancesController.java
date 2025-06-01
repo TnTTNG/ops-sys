@@ -84,4 +84,15 @@ public class ListInstancesController {
             return Result.error("获取实例ID失败：" + e.getMessage());
         }
     }
+
+
+    /**
+     * 登录实例
+     * @param instanceId 实例ID
+     * @return 登录响应
+     */
+    @GetMapping("/login")
+    public Result loginInstance(@RequestParam String instanceId) {
+        return listInstancesService.loginInstance(instanceId);
+    }
 } 

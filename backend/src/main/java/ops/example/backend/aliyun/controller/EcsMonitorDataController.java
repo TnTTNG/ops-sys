@@ -107,4 +107,19 @@ public class EcsMonitorDataController {
             return Result.error("清理历史数据失败：" + e.getMessage());
         }
     }
+
+    /**
+     * 获取监控数据总记录数
+     * @return 记录总数
+     */
+    @GetMapping("/count")
+    public Result getTotalCount() {
+        try {
+            int count = ecsMonitorDataService.getTotalCount();
+            return Result.success(count);
+        } catch (Exception e) {
+            log.error("获取记录总数失败", e);
+            return Result.error("获取记录总数失败：" + e.getMessage());
+        }
+    }
 }

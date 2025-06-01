@@ -48,7 +48,10 @@
     </select>
 
     <delete id="deleteBeforeTime">
-        DELETE FROM system_monitor
-        WHERE monitor_time &lt; #{beforeTime}
+        DELETE FROM system_monitor WHERE monitor_time &lt; #{beforeTime}
     </delete>
+
+    <select id="selectTotalCount" resultType="int">
+        SELECT COUNT(*) FROM system_monitor
+    </select>
 </mapper>

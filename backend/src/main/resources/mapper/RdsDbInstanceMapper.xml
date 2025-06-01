@@ -4,6 +4,7 @@
     
     <select id="selectAll" resultType="ops.example.backend.aliyun.entity.RdsDbInstance">
         SELECT * FROM rds_db_instance
+        ORDER BY create_time DESC
     </select>
     
     <insert id="batchInsert" parameterType="java.util.List">
@@ -11,10 +12,9 @@
             db_instance_id, db_instance_description, region_id, db_instance_status,
             engine, engine_version, zone_id, db_instance_class, create_time,
             v_switch_id, tips_level, deletion_protection, lock_mode, pay_type,
-            db_instance_storage_type, vpc_id, connection_mode,
-            connection_string, expire_time, db_instance_memory,
-            resource_group_id, db_instance_net_type, db_instance_type, mutri_orsignle,
-            instance_network_type, created_at, updated_at
+            db_instance_storage_type, vpc_id, connection_mode, connection_string,
+            expire_time, db_instance_memory, resource_group_id, db_instance_net_type,
+            db_instance_type, mutri_orsignle, instance_network_type, created_at, updated_at
         ) VALUES 
         <foreach collection="list" item="item" separator=",">
             (
@@ -23,11 +23,10 @@
                 #{item.zoneId}, #{item.dbInstanceClass}, #{item.createTime},
                 #{item.vSwitchId}, #{item.tipsLevel}, #{item.deletionProtection},
                 #{item.lockMode}, #{item.payType}, #{item.dbInstanceStorageType},
-                #{item.vpcId}, #{item.connectionMode},
-                #{item.connectionString}, #{item.expireTime},
-                #{item.dbInstanceMemory}, #{item.resourceGroupId}, #{item.dbInstanceNetType},
-                #{item.dbInstanceType}, #{item.mutriORsignle}, #{item.instanceNetworkType},
-                #{item.createdAt}, #{item.updatedAt}
+                #{item.vpcId}, #{item.connectionMode}, #{item.connectionString},
+                #{item.expireTime}, #{item.dbInstanceMemory}, #{item.resourceGroupId},
+                #{item.dbInstanceNetType}, #{item.dbInstanceType}, #{item.mutriORsignle},
+                #{item.instanceNetworkType}, #{item.createdAt}, #{item.updatedAt}
             )
         </foreach>
         ON DUPLICATE KEY UPDATE
@@ -55,8 +54,11 @@
             db_instance_type = VALUES(db_instance_type),
             mutri_orsignle = VALUES(mutri_orsignle),
             instance_network_type = VALUES(instance_network_type),
-            created_at = VALUES(created_at),
             updated_at = VALUES(updated_at)
     </insert>
+    
+    <select id="selectById" resultType="ops.example.backend.aliyun.entity.RdsDbInstance">
+        SELECT * FROM rds_db_instance WHERE db_instance_id = #{dbInstanceId}
+    </select>
     
 </mapper> 

@@ -289,12 +289,19 @@ const fetchMonitorData = async () => {
     const formatTime = (date) => {
       return date.toISOString().replace(/\.\d{3}Z$/, 'Z')
     }
-    // 发送删除请求
-    await request.delete('/monitor/clean', {
-      params: {
-        beforeTime: formatTime(endTime)
-      }
-    })
+
+    // 先获取记录总数
+    const countResponse = await request.get('/monitor/count')
+    if (countResponse.code === '200' && countResponse.data >= 1000) {
+      // 如果记录数超过1000，调用清理接口
+      await request.delete('/monitor/clean', {
+        params: {
+          beforeTime: formatTime(new Date(endTime.getTime() - 24 * 3600000)) // 清理24小时前的数据
+        }
+      })
+      ElMessage.success('已自动清理历史监控数据')
+    }
+
     const response = await request.get('/monitor/data', {
       params: {
         instanceId: selectedInstanceId.value,

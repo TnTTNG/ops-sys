@@ -357,4 +357,20 @@ public class ListInstances {
          */
         private String key;
     }
+
+    /**
+     * 实例登录响应
+     */
+    @Data
+    public static class LoginResponse {
+        /**
+         * 请求ID
+         */
+        private String requestId;
+        
+        /**
+         * 重定向URL
+         */
+        private String redirectUrl;
+    }
 }

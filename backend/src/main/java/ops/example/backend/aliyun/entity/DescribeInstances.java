@@ -44,6 +44,7 @@ public class DescribeInstances {
     private LocalDateTime createdAt;      // 创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime updatedAt;      // 更新时间
+    private String vncUrl;                // vnc连接地址
 
     public Integer getId() {
         return id;

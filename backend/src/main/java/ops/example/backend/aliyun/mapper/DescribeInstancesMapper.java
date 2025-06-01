@@ -24,7 +24,7 @@ public interface DescribeInstancesMapper {
 
     int batchInsert(List<DescribeInstances> instances);
 
-    @Select("SELECT * FROM 'ecs_instance' WHERE instance_id = #{instanceId}")
+    @Select("SELECT * FROM ecs_instance WHERE instance_id = #{instanceId}")
     DescribeInstances selectId(String instanceId);
 
     /**
@@ -33,4 +33,5 @@ public interface DescribeInstancesMapper {
      */
     @Select("SELECT instance_id FROM describe_instances LIMIT 1")
     String selectFirstInstanceId();
+
 }

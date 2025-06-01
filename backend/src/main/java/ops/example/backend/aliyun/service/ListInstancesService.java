@@ -10,6 +10,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import ops.example.backend.aliyun.entity.ListInstances;
 import ops.example.backend.aliyun.mapper.ListInstanceMapper;
+import ops.example.backend.common.Result;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -184,8 +185,39 @@ public class ListInstancesService {
      * 获取第一个实例ID
      * @return 实例ID
      */
-    @Transactional(rollbackFor = Exception.class)
+    // @Transactional(rollbackFor = Exception.class)
     public String selectFirstInstanceId() {
         return listInstanceMapper.selectFirstInstanceId();
     }
-} 
+
+    /**
+     * 登录实例
+     * @param instanceId 实例ID
+     * @return 登录响应
+     */
+    public Result loginInstance(String instanceId) {
+        try {
+            // 创建SWAS客户端
+            Client credential = new Client();
+            Config config = new Config()
+                    .setCredential(credential);
+            config.endpoint = "swas.cn-heyuan.aliyuncs.com";  // 使用正确的endpoint
+            com.aliyun.swas_open20200601.Client client = new com.aliyun.swas_open20200601.Client(config);
+            
+            com.aliyun.swas_open20200601.models.LoginInstanceRequest request = new com.aliyun.swas_open20200601.models.LoginInstanceRequest()
+                    .setRegionId("cn-heyuan")
+                    .setInstanceId(instanceId);
+            RuntimeOptions runtime = new RuntimeOptions();
+            com.aliyun.swas_open20200601.models.LoginInstanceResponse response = client.loginInstanceWithOptions(request, runtime);
+            
+            ListInstances.LoginResponse loginResponse = new ListInstances.LoginResponse();
+            loginResponse.setRequestId(response.getBody().getRequestId());
+            loginResponse.setRedirectUrl(response.getBody().getRedirectUrl());
+            
+            return Result.success(loginResponse);
+        } catch (Exception e) {
+            log.error("登录实例失败", e);
+            return Result.error("登录实例失败：" + e.getMessage());
+        }
+    }
+}

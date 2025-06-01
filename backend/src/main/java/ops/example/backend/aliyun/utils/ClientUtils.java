@@ -16,11 +16,25 @@ public class ClientUtils {
                 .setEndpoint("rds.aliyuncs.com");
         return new com.aliyun.rds20140815.Client(config);
     }
+    public static com.aliyun.rds20140815.Client createClient1() throws Exception {
+        Config config = new Config()
+                .setAccessKeyId(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID_2"))
+                .setAccessKeySecret(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET_2"))
+                .setEndpoint("rds.aliyuncs.com");
+        return new com.aliyun.rds20140815.Client(config);
+    }
 
     public static Client createEcsClient() throws Exception {
         Config config = new Config()
                 .setAccessKeyId(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID"))
                 .setAccessKeySecret(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET"))
+                .setEndpoint("ecs.aliyuncs.com");
+        return new Client(config);
+    }
+    public static Client createEcsClient1() throws Exception {
+        Config config = new Config()
+                .setAccessKeyId(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID_2"))
+                .setAccessKeySecret(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET_2"))
                 .setEndpoint("ecs.aliyuncs.com");
         return new Client(config);
     }
@@ -44,6 +58,13 @@ public class ClientUtils {
     }
 
     public static com.aliyun.swas_open20200601.Client createSWASClient() throws Exception {
+        Config config = new Config()
+                .setAccessKeyId(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID"))
+                .setAccessKeySecret(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET"))
+                .setEndpoint("swas.aliyuncs.com");
+        return new com.aliyun.swas_open20200601.Client(config);
+    }
+    public static com.aliyun.swas_open20200601.Client createSWASClient1() throws Exception {
         Config config = new Config()
                 .setAccessKeyId(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID"))
                 .setAccessKeySecret(System.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET"))

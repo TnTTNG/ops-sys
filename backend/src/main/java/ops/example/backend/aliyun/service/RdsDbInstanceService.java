@@ -3,6 +3,7 @@ package ops.example.backend.aliyun.service;
 import com.aliyun.rds20140815.models.DescribeDBInstancesResponse;
 import com.aliyun.rds20140815.models.DescribeDBInstancesResponseBody;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import ops.example.backend.aliyun.entity.RdsDbInstance;
 import ops.example.backend.aliyun.mapper.RdsDbInstanceMapper;
 import ops.example.backend.aliyun.utils.ClientUtils;
@@ -20,7 +21,7 @@ import java.util.List;
  * @version 1.0
  * @created_date 2025-05-29-19:06
  */
-
+@Slf4j
 @Service
 public class RdsDbInstanceService {
 
@@ -48,6 +49,11 @@ public class RdsDbInstanceService {
         DescribeDBInstancesResponse response = client.describeDBInstancesWithOptions(request, runtime);
         List<DescribeDBInstancesResponseBody.DescribeDBInstancesResponseBodyItemsDBInstance> items = 
             response.getBody().getItems().getDBInstance();
+        
+        if (items == null || items.isEmpty()) {
+            log.warn("没有找到需要同步的RDS实例");
+            return 0;
+        }
         
         // 转换为实体对象
         List<RdsDbInstance> instances = new ArrayList<>();
@@ -87,9 +93,17 @@ public class RdsDbInstanceService {
                 LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                 instance.setCreatedAt(dateTime);
                 instance.setUpdatedAt(dateTime);
+            } else {
+                instance.setCreatedAt(LocalDateTime.now());
+                instance.setUpdatedAt(LocalDateTime.now());
             }
             
             instances.add(instance);
+        }
+        
+        if (instances.isEmpty()) {
+            log.warn("没有有效的RDS实例数据需要同步");
+            return 0;
         }
         
         // 批量插入数据库
